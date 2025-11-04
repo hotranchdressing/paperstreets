@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soundview Urban Agriculture - Growing & Composting Dreams</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Soundview Urban Agriculture</h1>
+            <p class="subtitle">Community Voices: What are we growing? What are we composting?</p>
+        </header>
+
+        <div class="main-content">
+            <div class="prompt-section">
+                <div class="prompt-card">
+                    <h2 id="current-prompt">Loading...</h2>
+                    <p class="prompt-category" id="prompt-category"></p>
+                </div>
+                <input type="text" id="user-input" placeholder="Share your thoughts...">
+                <button id="submit-btn">Plant Your Words</button>
+                <button id="new-prompt-btn">New Prompt</button>
+            </div>
+
+            <div class="visualization-area">
+                <div class="category-zone growing-zone">
+                    <h3>🌱 Growing</h3>
+                    <div class="image-container">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%238B4513' width='400' height='300'/%3E%3Cellipse cx='200' cy='150' rx='180' ry='120' fill='%23654321'/%3E%3Cellipse cx='150' cy='200' rx='100' ry='60' fill='%238B4513'/%3E%3Cellipse cx='280' cy='180' rx='80' ry='50' fill='%23654321'/%3E%3C/svg%3E" alt="Soil for growing" class="zone-image">
+                        <div class="plant-growth" id="growing-plants"></div>
+                    </div>
+                    <div class="floating-responses" id="growing-responses"></div>
+                </div>
+
+                <div class="category-zone composting-zone">
+                    <h3>🗑️ Composting</h3>
+                    <div class="image-container">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f5f5dc' width='400' height='300'/%3E%3Crect x='80' y='80' width='240' height='180' fill='%23a0826d' stroke='%23654321' stroke-width='8' rx='10'/%3E%3Crect x='80' y='80' width='240' height='40' fill='%23654321'/%3E%3Cellipse cx='200' cy='100' rx='100' ry='15' fill='%23a0826d'/%3E%3C/svg%3E" alt="Empty compost bin" class="zone-image">
+                        <div class="plant-growth" id="composting-plants"></div>
+                    </div>
+                    <div class="floating-responses" id="composting-responses"></div>
+                </div>
+            </div>
+
+            <div class="leaderboard-section">
+                <h2>🌿Community Growth</h2>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="growing-count">0</span>
+                        <span class="stat-label">Dreams Growing</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="composting-count">0</span>
+                        <span class="stat-label">Items Composted</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="total-count">0</span>
+                        <span class="stat-label">Total Voices</span>
+                    </div>
+                </div>
+                <div class="recent-submissions">
+                    <h3>Recent Community Voices</h3>
+                    <div id="recent-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
