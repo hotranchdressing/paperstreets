@@ -1,3 +1,17 @@
+const responsesRef = firebaseRef(window.db, 'responses');
+
+// When a user submits
+function submitResponse(text) {
+  window.firebasePush(responsesRef, { text, timestamp: Date.now() });
+}
+
+// When new data arrives (from anyone)
+window.firebaseOnChildAdded(responsesRef, (snapshot) => {
+  const data = snapshot.val();
+  showFloatingText(data.text);
+});
+
+
 // Prompts for each category
 const prompts = {
     growing: [

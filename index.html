@@ -1,9 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soundview Urban Agriculture - Growing & Composting Dreams</title>
+
+<!-- Firebase SDKs -->
+<script type="module">
+  // Import the necessary Firebase parts
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+  // Your project’s Firebase config (paste yours here!)
+  const firebaseConfig = {
+  apiKey: "AIzaSyDLoTcJxUTDUqxPtNCn0yeiARFSQBmvevQ",
+  authDomain: "paperstreets.firebaseapp.com",
+  projectId: "paperstreets",
+  storageBucket: "paperstreets.firebasestorage.app",
+  messagingSenderId: "456922328427",
+  appId: "1:456922328427:web:fa6ea1e70ddaa92baeb02e",
+  measurementId: "G-05KGK0FTS7"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Make db available globally
+  window.db = db;
+  window.firebaseRef = ref;
+  window.firebasePush = push;
+  window.firebaseOnChildAdded = onChildAdded;
+</script>
+
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
