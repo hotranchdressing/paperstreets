@@ -1,10 +1,32 @@
-// Prompt data
-const prompts = [
-  { question: "What are you growing?", category: "growing" },
-  { question: "What are you composting?", category: "composting" }
-];
+// Prompts for each category
+const prompts = {
+  growing: [
+    "What dream are you planting for your community?",
+    "What skill or knowledge do you want to cultivate?",
+    "What positive change do you envision for the neighborhood?",
+    "What connections do you want to nurture?",
+    "What tradition or practice do you want to keep alive?",
+    "What new possibility excites you?",
+    "What strength in yourself or community do you want to develop?",
+    "What abundance do you imagine for the future?",
+    "What seeds of change are you ready to plant?"
+  ],
+  composting: [
+    "What fear or doubt are you ready to release?",
+    "What habit no longer serves you?",
+    "What limiting belief can you let go of?",
+    "What past disappointment are you ready to compost?",
+    "What negative pattern are you breaking?",
+    "What old story about yourself can you transform?",
+    "What grudge or resentment are you releasing?",
+    "What barrier are you ready to break down?",
+    "What self-judgment can you compost into wisdom?",
+    "What are you making peace with and letting go?"
+  ]
+};
 
-let currentPromptIndex = 0;
+let currentCategory = null;
+let currentPrompt = null;
 
 // Element references
 const currentPromptEl = document.getElementById("current-prompt");
@@ -25,20 +47,23 @@ const totalCount = document.getElementById("total-count");
 
 const recentList = document.getElementById("recent-list");
 
-// initialize
-setPrompt(currentPromptIndex);
+// Initialize with random prompt
+generateNewPrompt();
 
-function setPrompt(index) {
-  const { question, category } = prompts[index];
-  currentPromptEl.textContent = question;
-  promptCategoryEl.textContent = category.toUpperCase();
+// Generate a random prompt
+function generateNewPrompt() {
+  const categories = ['growing', 'composting'];
+  currentCategory = categories[Math.floor(Math.random() * categories.length)];
+  const categoryPrompts = prompts[currentCategory];
+  currentPrompt = categoryPrompts[Math.floor(Math.random() * categoryPrompts.length)];
+  
+  currentPromptEl.textContent = currentPrompt;
+  promptCategoryEl.textContent = currentCategory === 'growing' ? 'GROWING' : 'COMPOSTING';
+  promptCategoryEl.style.color = currentCategory === 'growing' ? '#34a853' : '#8B4513';
 }
 
-newPromptBtn.addEventListener("click", () => {
-  currentPromptIndex = (currentPromptIndex + 1) % prompts.length;
-  setPrompt(currentPromptIndex);
-});
-
+// Event listeners
+newPromptBtn.addEventListener("click", generateNewPrompt);
 submitBtn.addEventListener("click", handleSubmit);
 userInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") handleSubmit();
@@ -46,30 +71,36 @@ userInput.addEventListener("keypress", (e) => {
 
 function handleSubmit() {
   const text = userInput.value.trim();
-  if (!text) return;
-
-  const category = prompts[currentPromptIndex].category;
+  if (!text) {
+    alert('Please enter your thoughts before planting!');
+    return;
+  }
 
   // Create floating response
-  createFloatingResponse(text, category);
+  createFloatingResponse(text, currentCategory);
 
   // Create plant or compost icon
-  createVisualElement(category);
+  createVisualElement(currentCategory);
 
   // Update counts
-  updateStats(category);
+  updateStats(currentCategory);
 
   // Log recent submission
-  addRecentSubmission(text, category);
+  addRecentSubmission(text, currentCategory);
 
-  // Clear input
+  // Clear input and generate new prompt
   userInput.value = "";
+  userInput.placeholder = 'Thank you for sharing! Add another...';
+  setTimeout(() => {
+    userInput.placeholder = 'Share your thoughts...';
+  }, 3000);
+  
+  generateNewPrompt();
 }
 
 // Create floating text bubbles
 function createFloatingResponse(text, category) {
-  const zone =
-    category === "growing" ? growingResponses : compostingResponses;
+  const zone = category === "growing" ? growingResponses : compostingResponses;
   const bubble = document.createElement("div");
   bubble.classList.add("floating-text");
   if (category === "composting") bubble.classList.add("composting");
@@ -77,23 +108,24 @@ function createFloatingResponse(text, category) {
 
   const areaWidth = zone.offsetWidth;
   const areaHeight = zone.offsetHeight;
-  const x = Math.random() * (areaWidth - 150);
-  const y = Math.random() * (areaHeight - 50);
-  bubble.style.left = `${x}px`;
-  bubble.style.top = `${y}px`;
+  const x = Math.random() * (areaWidth - 200);
+  const y = Math.random() * (areaHeight - 80);
+  bubble.style.left = `${Math.max(0, x)}px`;
+  bubble.style.top = `${Math.max(0, y)}px`;
 
   zone.appendChild(bubble);
 
+  // Remove after 15 seconds
   setTimeout(() => bubble.remove(), 15000);
 }
 
-// Create visual “growth” in soil or compost bin
+// Create visual "growth" in soil or compost bin
 function createVisualElement(category) {
   const zone = category === "growing" ? growingPlants : compostingPlants;
   const el = document.createElement("div");
   el.classList.add("plant");
 
-  // ✅ Use your PNGs instead of emojis
+  // Use your PNGs instead of emojis
   if (category === "growing") {
     const plantImages = [
       "images/beebalm3.png",
@@ -101,9 +133,7 @@ function createVisualElement(category) {
       "images/lilac3.png",
       "images/milkweed3.png"
     ];
-    el.style.backgroundImage = `url('${
-      plantImages[Math.floor(Math.random() * plantImages.length)]
-    }')`;
+    el.style.backgroundImage = `url('${plantImages[Math.floor(Math.random() * plantImages.length)]}')`;
   } else {
     const compostImages = [
       "images/beebalm3.png",
@@ -111,9 +141,7 @@ function createVisualElement(category) {
       "images/lilac3.png",
       "images/milkweed3.png"
     ];
-    el.style.backgroundImage = `url('${
-      compostImages[Math.floor(Math.random() * compostImages.length)]
-    }')`;
+    el.style.backgroundImage = `url('${compostImages[Math.floor(Math.random() * compostImages.length)]}')`;
   }
 
   // Random position
@@ -125,15 +153,14 @@ function createVisualElement(category) {
   el.style.top = `${y}px`;
 
   zone.appendChild(el);
-}
 
-  // fade out gently
+  // Fade out gently after 8 seconds
   setTimeout(() => {
     el.style.transition = "opacity 2s";
     el.style.opacity = 0;
     setTimeout(() => el.remove(), 2000);
   }, 8000);
-
+}
 
 // Stats and logs
 let growCount = 0;
@@ -160,7 +187,7 @@ function addRecentSubmission(text, category) {
 
   recentList.prepend(item);
 
-  // keep the list to 10 entries
+  // Keep the list to 10 entries
   const items = recentList.querySelectorAll(".recent-item");
   if (items.length > 10) items[items.length - 1].remove();
 }
