@@ -190,3 +190,24 @@ function renderRecent(responses) {
     recentList.appendChild(item);
   });
 }
+
+// Auto-refresh responses every 5 seconds
+async function fetchLatestResponses() {
+  try {
+    const res = await fetch("/api/responses");
+    const data = await res.json();
+    
+    if (data.responses) {
+      updateStats(data.responses);
+      renderRecent(data.responses);
+    }
+  } catch (err) {
+    console.error("Error fetching responses:", err);
+  }
+}
+
+// Fetch on page load
+fetchLatestResponses();
+
+// Then fetch every 5 seconds
+setInterval(fetchLatestResponses, 5000);
