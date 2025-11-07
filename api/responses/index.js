@@ -3,7 +3,7 @@ import { neon } from '@neondatabase/serverless';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
@@ -22,6 +22,15 @@ export default async function handler(req, res) {
         timestamp TIMESTAMPTZ DEFAULT NOW()
       )
     `;
+
+    // Handle DELETE - Clear all responses (TEMPORARY - remove after clearing!)
+    if (req.method === 'DELETE') {
+      await sql`DELETE FROM responses`;
+      return res.status(200).json({ 
+        success: true, 
+        message: 'All responses cleared!' 
+      });
+    }
 
     // Handle POST - Add new response
     if (req.method === 'POST') {
