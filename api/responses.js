@@ -1,7 +1,9 @@
-// api/responses.js (with Neon Postgres)
-import { neon } from '@neondatabase/serverless';
+// api/responses.js (Simple test version - no database)
+// This will help us figure out if the API is working at all
 
-export default async function handler(req, res) {
+let responses = []; // In-memory storage (resets on cold starts)
+
+module.exports = async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -12,19 +14,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Connect to database using environment variable set by Vercel
-    const sql = neon(process.env.DATABASE_URL);
-
-    // Create table if it doesn't exist (runs on first request)
-    await sql`
-      CREATE TABLE IF NOT EXISTS responses (
-        id SERIAL PRIMARY KEY,
-        category TEXT NOT NULL,
-        text TEXT NOT NULL,
-        timestamp TIMESTAMPTZ DEFAULT NOW()
-      )
-    `;
-
     // Handle POST - Add new response
     if (req.method === 'POST') {
       const { category, text } = req.body;
@@ -33,45 +22,38 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing category or text' });
       }
 
-      // Insert new response
-      await sql`
-        INSERT INTO responses (category, text)
-        VALUES (${category}, ${text})
-      `;
-
-      // Get all responses
-      const rows = await sql`
-        SELECT category, text, timestamp 
-        FROM responses 
-        ORDER BY timestamp ASC
-      `;
+      // Add to in-memory array
+      responses.push({
+        category,
+        text,
+        timestamp: new Date().toISOString()
+      });
 
       console.log('Saved response:', category, text);
 
       return res.status(200).json({ 
         success: true, 
-        responses: rows
+        responses: responses
       });
     }
 
     // Handle GET - Retrieve all responses
     if (req.method === 'GET') {
-      const rows = await sql`
-        SELECT category, text, timestamp 
-        FROM responses 
-        ORDER BY timestamp ASC
-      `;
-      
-      return res.status(200).json({ responses: rows });
+      return res.status(200).json({ 
+        responses: responses,
+        count: responses.length,
+        message: 'API is working!' 
+      });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
     
   } catch (error) {
-    console.error('Database Error:', error);
+    console.error('API Error:', error);
     return res.status(500).json({ 
       error: 'Server error',
-      message: error.message 
+      message: error.message,
+      stack: error.stack
     });
   }
-}
+};
