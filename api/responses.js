@@ -1,9 +1,77 @@
-export default function handler(req, res) {
-  if (req.method === "POST") {
-    const { category, text } = req.body;
-    // Do something with input
-    res.status(200).json({ message: "Success", category, text });
-  } else {
-    res.status(405).json({ error: "Method not allowed" });
+// api/responses.js (with Neon Postgres)
+import { neon } from '@neondatabase/serverless';
+
+export default async function handler(req, res) {
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  try {
+    // Connect to database using environment variable set by Vercel
+    const sql = neon(process.env.DATABASE_URL);
+
+    // Create table if it doesn't exist (runs on first request)
+    await sql`
+      CREATE TABLE IF NOT EXISTS responses (
+        id SERIAL PRIMARY KEY,
+        category TEXT NOT NULL,
+        text TEXT NOT NULL,
+        timestamp TIMESTAMPTZ DEFAULT NOW()
+      )
+    `;
+
+    // Handle POST - Add new response
+    if (req.method === 'POST') {
+      const { category, text } = req.body;
+      
+      if (!category || !text) {
+        return res.status(400).json({ error: 'Missing category or text' });
+      }
+
+      // Insert new response
+      await sql`
+        INSERT INTO responses (category, text)
+        VALUES (${category}, ${text})
+      `;
+
+      // Get all responses
+      const rows = await sql`
+        SELECT category, text, timestamp 
+        FROM responses 
+        ORDER BY timestamp ASC
+      `;
+
+      console.log('Saved response:', category, text);
+
+      return res.status(200).json({ 
+        success: true, 
+        responses: rows
+      });
+    }
+
+    // Handle GET - Retrieve all responses
+    if (req.method === 'GET') {
+      const rows = await sql`
+        SELECT category, text, timestamp 
+        FROM responses 
+        ORDER BY timestamp ASC
+      `;
+      
+      return res.status(200).json({ responses: rows });
+    }
+
+    return res.status(405).json({ error: 'Method not allowed' });
+    
+  } catch (error) {
+    console.error('Database Error:', error);
+    return res.status(500).json({ 
+      error: 'Server error',
+      message: error.message 
+    });
   }
 }
