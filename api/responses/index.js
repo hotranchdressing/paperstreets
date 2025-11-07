@@ -23,15 +23,6 @@ export default async function handler(req, res) {
       )
     `;
 
-    // Handle DELETE - Clear all responses (TEMPORARY - remove after clearing!)
-    if (req.method === 'DELETE') {
-      await sql`DELETE FROM responses`;
-      return res.status(200).json({ 
-        success: true, 
-        message: 'All responses cleared!' 
-      });
-    }
-
     // Handle POST - Add new response
     if (req.method === 'POST') {
       const { category, text } = req.body;
