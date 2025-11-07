@@ -42,7 +42,7 @@ const growingPlants = document.getElementById("growing-plants");
 const compostingPlants = document.getElementById("composting-plants");
 
 const growingCount = document.getElementById("growing-count");
-const compostingCount = document.getElementById("compost-count");
+const compostingCount = document.getElementById("composting-count");
 const totalCount = document.getElementById("total-count");
 
 const recentList = document.getElementById("recent-list");
