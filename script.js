@@ -163,7 +163,7 @@ function createVisualElement(category) {
     el.style.transition = "opacity 2s";
     el.style.opacity = 0;
     setTimeout(() => el.remove(), 2000);
-  }, 8000);
+  }, 30000);
 }
 
 // --- STATS AND LEADERBOARD ---
