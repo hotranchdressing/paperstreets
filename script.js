@@ -33,6 +33,38 @@ const currentPromptEl = document.getElementById("current-prompt");
 const promptCategoryEl = document.getElementById("prompt-category");
 const userInput = document.getElementById("user-input");
 const submitBtn = document.getElementById("submit-btn");
+
+// frontend back end talk
+submitBtn.addEventListener("click", async () => {
+  const text = userInput.value.trim();
+  if (!text) return;
+
+  const category = Math.random() < 0.5 ? "growing" : "composting";
+
+  fetch("/api/responses", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      category: selectedCategory,
+      text: userText,
+    }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Server response:", data);
+      // Optional: update UI with new plant/response
+      createVisualElement(selectedCategory, userText);
+      updateStats(selectedCategory);
+      addToRecentList(selectedCategory, userText);
+    })
+    .catch(err => console.error("Error posting response:", err));
+  // -----------------------------------
+
+  userInput.value = "";
+});
+
 const newPromptBtn = document.getElementById("new-prompt-btn");
 
 const growingResponses = document.getElementById("growing-responses");
@@ -61,6 +93,8 @@ function generateNewPrompt() {
   promptCategoryEl.textContent = currentCategory === 'growing' ? 'GROWING' : 'COMPOSTING';
   promptCategoryEl.style.color = currentCategory === 'growing' ? '#34a853' : '#8B4513';
 }
+
+
 
 // Event listeners
 newPromptBtn.addEventListener("click", generateNewPrompt);

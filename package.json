@@ -1,0 +1,15 @@
+{
+  "name": "paperstreets",
+  "version": "1.0.0",
+  "description": "Interactive Soundview Urban Agriculture site",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Emily Caywood",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.7.2"
+  }
+}
