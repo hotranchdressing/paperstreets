@@ -211,3 +211,58 @@ fetchLatestResponses();
 
 // Then fetch every 5 seconds
 setInterval(fetchLatestResponses, 5000);
+
+// Track which responses we've already shown visually
+let visualizedResponseIds = new Set();
+
+// Modified fetchLatestResponses function
+async function fetchLatestResponses() {
+  try {
+    const res = await fetch("/api/responses");
+    const data = await res.json();
+    
+    if (data.responses) {
+      updateStats(data.responses);
+      renderRecent(data.responses);
+      
+      // NEW: Show visual elements for new responses
+      visualizeNewResponses(data.responses);
+    }
+  } catch (err) {
+    console.error("Error fetching responses:", err);
+  }
+}
+
+// NEW FUNCTION: Create visual elements for responses we haven't shown yet
+function visualizeNewResponses(responses) {
+  responses.forEach((response, index) => {
+    // Use index as a simple ID (or response.id if your DB returns it)
+    const responseId = response.id || `${response.timestamp}-${response.text.substring(0, 10)}`;
+    
+    // Skip if we've already visualized this one
+    if (visualizedResponseIds.has(responseId)) {
+      return;
+    }
+    
+    // Mark as visualized
+    visualizedResponseIds.add(responseId);
+    
+    // Create the visual element
+    createVisualElement(response.category);
+    
+    // Optionally also create floating text bubble
+    createFloatingResponse(response.text, response.category);
+  });
+}
+
+// Fetch on page load
+fetchLatestResponses();
+
+// Then fetch every 5 seconds
+setInterval(fetchLatestResponses, 5000);
+
+// Inside visualizeNewResponses, replace the createVisualElement line with:
+setTimeout(() => {
+  createVisualElement(response.category);
+  createFloatingResponse(response.text, response.category);
+}, Math.random() * 2000); // Random delay 0-2 seconds
