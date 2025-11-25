@@ -5,11 +5,12 @@
 }
 
 body {
-    font-family: sans-serif;
-    background: #fff;
-    color: #000;
-    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background-color: #000000;
     padding: 20px;
+    font-family: "constantia", sans-serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .container {
@@ -17,251 +18,155 @@ body {
     margin: 0 auto;
 }
 
-header {
+/* Title Styling */
+.page-title {
     text-align: center;
+    font-size: 2.5rem;
+    color: #ffffff;
     margin-bottom: 40px;
-    padding: 30px;
-    border: 2px solid #000;
-    border-radius: 10px;
-}
-
-header h1 {
-    font-size: 2em;
-    margin-bottom: 10px;
-}
-
-.subtitle {
-    font-size: 1em;
-}
-
-.main-content {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-}
-
-.prompt-section {
-    background: #fff;
-    padding: 20px;
-    border: 2px solid #000;
-    border-radius: 10px;
-}
-
-.prompt-card {
-    padding: 20px;
-    border: 1px solid #000;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.prompt-card h2 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-}
-
-.prompt-category {
-    font-size: 1em;
     font-weight: bold;
-    text-transform: uppercase;
 }
 
-#user-input {
+/* Video Styling */
+.video-wrapper {
     width: 100%;
-    padding: 10px;
-    font-size: 1em;
-    border: 1px solid #000;
-    border-radius: 5px;
-    margin-bottom: 10px;
+    max-width: 800px;
+    margin: 40px auto;
+    display: flex;
+    justify-content: center;
 }
 
-button {
-    padding: 10px 20px;
-    font-size: 1em;
-    border: 1px solid #000;
-    border-radius: 5px;
-    background: none;
-    color: #000;
-    cursor: pointer;
-    font-weight: 600;
-    margin-right: 5px;
+.video-wrapper video {
+    width: 100%;
+    height: auto;
 }
 
-button:hover {
-    background: #000;
-    color: #fff;
-}
-
-.visualization-area {
+/* GIF Row Styling */
+.gif-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 30px auto;
+    max-width: 900px;
 }
 
-.category-zone {
-    border: 2px solid #000;
-    border-radius: 10px;
-    padding: 15px;
-    min-height: 400px;
+.gif-item {
     position: relative;
+    aspect-ratio: 1;
+    cursor: pointer;
+    overflow: auto;
+    transition: transform 0.2s ease;
 }
 
-.category-zone h3 {
-    text-align: center;
-    font-size: 1.5em;
-    margin-bottom: 10px;
+.gif-item:hover {
+    transform: scale(1.05);
 }
 
-.image-container {
-    position: relative;
-    width: 100%;
-    height: 250px;
-    margin-bottom: 10px;
-    border: 1px solid #000;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.zone-image {
+.gif-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(1);
+    display: block;
 }
 
-.plant-growth {
+.gif-text {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
-}
-
-.plant {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    animation: plantGrow 1s ease-out;
-    opacity: 0.8;
-}
-
-@keyframes plantGrow {
-    from {
-        transform: scale(0) translateY(20px);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1) translateY(0);
-        opacity: 0.8;
-    }
-}
-
-.floating-responses {
-    position: relative;
-    min-height: 150px;
-    padding: 10px;
-}
-
-.floating-text {
-    position: absolute;
-    padding: 5px 10px;
-    background: #000;
-    color: #fff;
-    border-radius: 10px;
-    font-size: 0.9em;
-    max-width: 180px;
-    word-wrap: break-word;
-    animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-5px); }
-}
-
-.leaderboard-section {
-    border: 2px solid #000;
-    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 20px;
-}
-
-.leaderboard-section h2 {
     text-align: center;
-    font-size: 1.5em;
-    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
 }
 
-.stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin-bottom: 20px;
+.hidden {
+    display: none;
 }
 
-.stat-item {
-    text-align: center;
-    padding: 10px;
-    border: 1px solid #000;
-    border-radius: 10px;
-}
-
-.stat-number {
-    display: block;
-    font-size: 2em;
-    font-weight: bold;
-}
-
-.stat-label {
-    display: block;
-    font-size: 0.9em;
-}
-
-.recent-submissions {
-    margin-top: 20px;
-}
-
-.recent-submissions h3 {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-#recent-list {
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-.recent-item {
-    padding: 10px;
-    margin-bottom: 8px;
-    border: 1px solid #000;
+/* Bottom Text Box Styling */
+.text-box {
+    max-width: 800px;
+    margin: 50px auto 30px;
+    padding: 30px;
+    background-color: #ffffff;
     border-radius: 8px;
+    text-align: center;
 }
 
-.recent-item-text {
-    font-size: 0.9em;
-    margin-bottom: 4px;
+.text-box p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
 }
 
-.recent-item-meta {
-    font-size: 0.8em;
-    color: #555;
-}
-
-@media (max-width: 968px) {
-    .visualization-area {
-        grid-template-columns: 1fr;
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
     }
 
-    .stats {
-        grid-template-columns: 1fr;
+    .page-title {
+        font-size: 2rem;
+        margin-bottom: 30px;
     }
 
-    header h1 {
-        font-size: 1.5em;
+    .text-box {
+        padding: 20px;
+        margin: 40px auto 20px;
+    }
+
+    .text-box p {
+        font-size: 14px;
+    }
+
+    .gif-row {
+        gap: 10px;
+        margin: 20px auto;
+    }
+
+    .gif-text {
+        padding: 15px;
+        font-size: 12px;
+    }
+
+    .video-wrapper {
+        margin: 30px auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .text-box {
+        padding: 15px;
+        margin: 30px auto 15px;
+    }
+
+    .text-box p {
+        font-size: 13px;
+    }
+
+    .gif-row {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .gif-text {
+        padding: 10px;
+        font-size: 11px;
+    }
+
+    .video-wrapper {
+        margin: 20px auto;
     }
 }
