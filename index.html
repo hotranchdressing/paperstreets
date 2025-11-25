@@ -3,65 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-
-    <link rel="stylesheet" href="/styles.css">
+    <title>Paper Streets</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://use.typekit.net/jvr2qlk.css">
 </head>
 <body>
     <div class="container">
+        <!-- Title -->
+        <h1 class="page-title"></h1>
 
-        <div class="main-content">
-            <div class="prompt-section">
-                <div class="prompt-card">
-                    <h2 id="current-prompt">Loading...</h2>
-                    <p class="prompt-category" id="prompt-category"></p>
-                </div>
-                <input type="text" id="user-input" placeholder="Share your thoughts...">
-                <button id="submit-btn">Plant Your Words</button>
-                <button id="new-prompt-btn">New Prompt</button>
+        <!-- First Video -->
+        <div class="video-wrapper">
+            <video controls>
+                <source src="corn.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <!-- First Row of GIFs -->
+        <div class="gif-row">
+            <div class="gif-item" data-text="This is the text for GIF 1">
+                <img src="callalloo.gif" alt="GIF 1">
+                <p class="gif-text hidden">This is the text for GIF 1</p>
             </div>
-
-            <div class="visualization-area">
-                <div class="category-zone growing-zone">
-                    <h3>Growing</h3>
-                    <div class="image-container">
-                        <div class="plant-growth" id="growing-plants"></div>
-                    </div>
-                    <div class="floating-responses" id="growing-responses"></div>
-                </div>
-
-                <div class="category-zone composting-zone">
-                    <h3>Composting</h3>
-                    <div class="image-container">
-                        <div class="plant-growth" id="composting-plants"></div>
-                    </div>
-                    <div class="floating-responses" id="composting-responses"></div>
-                </div>
+            <div class="gif-item" data-text="This is the text for GIF 2">
+                <img src="callalloodrink.gif" alt="GIF 2">
+                <p class="gif-text hidden">This is the text for GIF 2</p>
             </div>
-
-            <div class="leaderboard-section">
-                <div class="stats">
-                    <div class="stat-item">
-                        <span class="stat-number" id="growing-count">0</span>
-                        <span class="stat-label">Dreams Growing</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="composting-count">0</span>
-                        <span class="stat-label">Items Composted</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="total-count">0</span>
-                        <span class="stat-label">Total Voices</span>
-                    </div>
-                </div>
-                <div class="recent-submissions">
-                    <h3>Recent Community Voices</h3>
-                    <div id="recent-list"></div>
-                </div>
+            <div class="gif-item" data-text="This is the text for GIF 3">
+                <img src="garlic.gif" alt="GIF 3">
+                <p class="gif-text hidden">This is the text for GIF 3</p>
             </div>
+        </div>
+
+        <!-- Second Video -->
+        <div class="video-wrapper">
+            <video controls>
+                <source src="corn.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <!-- Second Row of GIFs -->
+        <div class="gif-row">
+            <div class="gif-item" data-text="This is the text for GIF 4">
+                <img src="dancingcollard.gif" alt="GIF 4">
+                <p class="gif-text hidden">This is the text for GIF 4</p>
+            </div>
+            <div class="gif-item" data-text="This is the text for GIF 5">
+                <img src="ladyliberty.gif" alt="GIF 5">
+                <p class="gif-text hidden">This is the text for GIF 5</p>
+            </div>
+            <div class="gif-item" data-text="This is the text for GIF 6">
+                <img src="pepperplant.gif" alt="GIF 6">
+                <p class="gif-text hidden">This is the text for GIF 6</p>
+            </div>
+        </div>
+
+        <!-- Third Video -->
+        <div class="video-wrapper">
+            <video controls>
+                <source src="corn.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <!-- Third Row of GIFs -->
+        <div class="gif-row">
+            <div class="gif-item" data-text="This is the text for GIF 7">
+                <img src="sotomayerhomes.gif" alt="GIF 7">
+                <p class="gif-text hidden">This is the text for GIF 7</p>
+            </div>
+            <div class="gif-item" data-text="This is the text for GIF 8">
+                <img src="worm.gif" alt="GIF 8">
+                <p class="gif-text hidden">This is the text for GIF 8</p>
+            </div>
+            <div class="gif-item" data-text="This is the text for GIF 9">
+                <img src="dandelion.gif" alt="GIF 9">
+                <p class="gif-text hidden">This is the text for GIF 9</p>
+            </div>
+        </div>
+
+        <!-- Bottom Text Box -->
+        <div class="text-box">
+            <p>Information about the studio, the projects as a collective, the relationship with Eagle Academy</p>
         </div>
     </div>
 
-    <script src="/script.js" defer></script>
+    <script src="script.js"></script>
 </body>
 </html>
