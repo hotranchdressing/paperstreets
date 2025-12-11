@@ -5,149 +5,262 @@
 }
 
 body {
-    font-family: "constantia", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    background-color: #000000;
-    padding: 0;
-}
-
-/* Minimalist Navigation Menu */
-.menu {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    padding: 30px 20px;
-    background-color: #000000;
-}
-
-.menu a {
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 16px;
-    transition: opacity 0.2s ease;
-}
-
-.menu a:hover {
-    opacity: 0.6;
+    font-family: 'Courier New', monospace;
+    background: #fff;
+    color: #000;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
 }
 
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+    min-height: 100vh;
+    padding: 40px 16px;
 }
 
-/* 3x3 GIF Grid Styling */
-.gif-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
-    max-width: 500px;
-    margin: 0 auto;
+header {
+    max-width: 900px;
+    margin: 0 auto 80px;
+    text-align: center;
 }
 
-.gif-item {
+h1 {
+    font-size: 28px;
+    font-weight: normal;
+    letter-spacing: 2px;
+}
+
+/* Video Player */
+.video-section {
+    margin-bottom: 120px;
+}
+
+.video-wrapper {
     position: relative;
-    aspect-ratio: 1;
-    cursor: pointer;
-    overflow: auto;
-    transition: transform 0.2s ease;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
-.gif-item:hover {
-    transform: scale(1.05);
-}
-
-.gif-item img {
+video {
     width: 100%;
+    display: block;
+    cursor: pointer;
+}
+
+/* Timeline and Annotations */
+.timeline {
+    position: relative;
+    height: 2px;
+    background: #000;
+    margin-top: 8px;
+}
+
+.timeline-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
     height: 100%;
-    object-fit: cover;
+    background: #666;
+    width: 0%;
+}
+
+.annotation-marker {
+    position: absolute;
+    top: -4px;
+    width: 10px;
+    height: 10px;
+    background: #000;
+    cursor: pointer;
+    transform: translateX(-50%);
+}
+
+.annotation-display {
+    margin-top: 16px;
+    padding: 12px;
+    border: 1px solid #000;
+    font-size: 14px;
+    display: none;
+}
+
+.annotation-display.visible {
+    display: block;
+}
+
+/* Annotation Input */
+.annotation-input {
+    margin-top: 16px;
+    padding: 16px;
+    border: 1px solid #000;
+    display: none;
+}
+
+.annotation-input.visible {
+    display: block;
+}
+
+.annotation-input textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.annotation-controls {
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.char-count {
+    font-size: 12px;
+    color: #666;
+}
+
+.button-group {
+    display: flex;
+    gap: 8px;
+}
+
+button {
+    padding: 8px 16px;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-secondary {
+    background: #fff;
+    border: 1px solid #000;
+}
+
+.btn-secondary:hover {
+    background: #f5f5f5;
+}
+
+.btn-primary {
+    background: #000;
+    color: #fff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #333;
+}
+
+.btn-primary:disabled {
+    background: #666;
+    cursor: wait;
+}
+
+/* Response Chain */
+.response-section {
+    max-width: 900px;
+    margin: 32px auto 0;
+    padding: 0 16px;
+}
+
+.response-divider {
+    border-top: 1px solid #000;
+    padding-top: 24px;
+}
+
+.response-list {
+    margin-bottom: 32px;
+}
+
+.response-item {
+    margin-bottom: 20px;
+    padding-left: 16px;
+    border-left: 2px solid #000;
+    font-size: 14px;
+}
+
+.response-timestamp {
+    color: #666;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.response-text {
+    line-height: 1.8;
+}
+
+/* Response Input */
+.response-input textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid #000;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.response-input button {
+    margin-top: 8px;
+    padding: 10px 20px;
+}
+
+/* GIF Toggle */
+.gif-section {
+    max-width: 900px;
+    margin: 80px auto;
+    padding: 0 16px;
+    cursor: pointer;
+}
+
+.gif-image {
+    width: 100%;
     display: block;
 }
 
 .gif-text {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border: 1px solid #000;
+    font-size: 16px;
+    line-height: 1.8;
+    min-height: 300px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 20px;
-    text-align: center;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #333;
 }
 
 .hidden {
     display: none;
 }
 
-/* Video Styling (for interview pages) */
-.video-wrapper {
-    width: 100%;
-    max-width: 800px;
-    margin: 40px auto;
-    display: flex;
-    justify-content: center;
-}
-
-.video-wrapper video {
-    width: 100%;
-    height: auto;
-}
-
-/* Mobile Responsive */
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
-    .menu {
-        gap: 25px;
-        padding: 20px 15px;
+    .container {
+        padding: 24px 12px;
     }
 
-    .menu a {
+    header {
+        margin-bottom: 48px;
+    }
+
+    h1 {
+        font-size: 20px;
+        letter-spacing: 1px;
+    }
+
+    .video-section {
+        margin-bottom: 80px;
+    }
+
+    .gif-section {
+        margin: 48px auto;
+    }
+
+    .gif-text {
+        padding: 24px;
         font-size: 14px;
     }
 
-    .container {
-        padding: 15px;
-    }
-
-    .gif-grid {
-        gap: 10px;
-    }
-
-    .gif-text {
-        padding: 15px;
-        font-size: 12px;
-    }
-}
-
-@media (max-width: 480px) {
-    .menu {
-        gap: 15px;
-        padding: 15px 10px;
-        flex-wrap: wrap;
-    }
-
-    .menu a {
-        font-size: 13px;
-    }
-
-    .container {
-        padding: 10px;
-    }
-
-    .gif-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-    }
-
-    .gif-text {
-        padding: 10px;
-        font-size: 11px;
+    .annotation-input,
+    .response-section {
+        padding: 0 8px;
     }
 }
