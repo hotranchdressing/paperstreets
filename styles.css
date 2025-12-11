@@ -6,52 +6,55 @@
 
 body {
     font-family: 'Courier New', monospace;
-    background: #fff;
-    color: #000;
+    background: #fafafa;
+    color: #2a2a2a;
     -webkit-font-smoothing: antialiased;
-    line-height: 1.6;
+    line-height: 1.7;
 }
 
 .container {
     min-height: 100vh;
-    padding: 40px 16px;
+    padding: 60px 24px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 header {
-    max-width: 900px;
-    margin: 0 auto 80px;
+    margin-bottom: 100px;
     text-align: center;
 }
 
 h1 {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: normal;
-    letter-spacing: 2px;
+    letter-spacing: 4px;
+    color: #4a4a4a;
 }
 
 /* Video Player */
 .video-section {
-    margin-bottom: 120px;
+    margin-bottom: 140px;
 }
 
 .video-wrapper {
     position: relative;
-    max-width: 900px;
-    margin: 0 auto;
 }
 
 video {
     width: 100%;
     display: block;
     cursor: pointer;
+    border-radius: 2px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 /* Timeline and Annotations */
 .timeline {
     position: relative;
-    height: 2px;
-    background: #000;
-    margin-top: 8px;
+    height: 3px;
+    background: #e0e0e0;
+    margin-top: 16px;
+    border-radius: 2px;
 }
 
 .timeline-progress {
@@ -59,26 +62,38 @@ video {
     left: 0;
     top: 0;
     height: 100%;
-    background: #666;
+    background: #888;
     width: 0%;
+    border-radius: 2px;
+    transition: width 0.1s ease;
 }
 
 .annotation-marker {
     position: absolute;
-    top: -4px;
-    width: 10px;
-    height: 10px;
-    background: #000;
+    top: -5px;
+    width: 13px;
+    height: 13px;
+    background: #5a5a5a;
     cursor: pointer;
     transform: translateX(-50%);
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.annotation-marker:hover {
+    background: #2a2a2a;
+    transform: translateX(-50%) scale(1.2);
 }
 
 .annotation-display {
-    margin-top: 16px;
-    padding: 12px;
-    border: 1px solid #000;
+    margin-top: 24px;
+    padding: 20px 24px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
     font-size: 14px;
     display: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .annotation-display.visible {
@@ -87,10 +102,13 @@ video {
 
 /* Annotation Input */
 .annotation-input {
-    margin-top: 16px;
-    padding: 16px;
-    border: 1px solid #000;
+    margin-top: 24px;
+    padding: 24px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
     display: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .annotation-input.visible {
@@ -99,16 +117,25 @@ video {
 
 .annotation-input textarea {
     width: 100%;
-    min-height: 80px;
-    padding: 8px;
-    border: 1px solid #ccc;
+    min-height: 100px;
+    padding: 14px;
+    border: 1px solid #d5d5d5;
+    border-radius: 3px;
     font-family: 'Courier New', monospace;
     font-size: 14px;
     resize: vertical;
+    background: #fafafa;
+    transition: border-color 0.2s ease;
+}
+
+.annotation-input textarea:focus {
+    outline: none;
+    border-color: #888;
+    background: #fff;
 }
 
 .annotation-controls {
-    margin-top: 8px;
+    margin-top: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -116,115 +143,143 @@ video {
 
 .char-count {
     font-size: 12px;
-    color: #666;
+    color: #999;
 }
 
 .button-group {
     display: flex;
-    gap: 8px;
+    gap: 10px;
 }
 
 button {
-    padding: 8px 16px;
+    padding: 10px 20px;
     font-family: 'Courier New', monospace;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
 }
 
 .btn-secondary {
     background: #fff;
-    border: 1px solid #000;
+    border: 1px solid #d5d5d5;
+    color: #5a5a5a;
 }
 
 .btn-secondary:hover {
     background: #f5f5f5;
+    border-color: #999;
 }
 
 .btn-primary {
-    background: #000;
+    background: #4a4a4a;
     color: #fff;
     border: none;
 }
 
 .btn-primary:hover {
-    background: #333;
+    background: #2a2a2a;
 }
 
 .btn-primary:disabled {
-    background: #666;
+    background: #999;
     cursor: wait;
 }
 
 /* Response Chain */
 .response-section {
-    max-width: 900px;
-    margin: 32px auto 0;
-    padding: 0 16px;
+    margin-top: 48px;
 }
 
 .response-divider {
-    border-top: 1px solid #000;
-    padding-top: 24px;
+    border-top: 1px solid #e5e5e5;
+    padding-top: 40px;
 }
 
 .response-list {
-    margin-bottom: 32px;
+    margin-bottom: 48px;
 }
 
 .response-item {
-    margin-bottom: 20px;
-    padding-left: 16px;
-    border-left: 2px solid #000;
+    margin-bottom: 28px;
+    padding-left: 20px;
+    border-left: 3px solid #e0e0e0;
     font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.response-item:hover {
+    border-left-color: #999;
 }
 
 .response-timestamp {
-    color: #666;
-    font-size: 12px;
-    margin-bottom: 4px;
+    color: #999;
+    font-size: 11px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .response-text {
-    line-height: 1.8;
+    line-height: 1.9;
+    color: #3a3a3a;
 }
 
 /* Response Input */
 .response-input textarea {
     width: 100%;
-    min-height: 100px;
-    padding: 12px;
-    border: 1px solid #000;
+    min-height: 120px;
+    padding: 16px;
+    border: 1px solid #d5d5d5;
+    border-radius: 3px;
     font-family: 'Courier New', monospace;
     font-size: 14px;
     resize: vertical;
+    background: #fafafa;
+    transition: border-color 0.2s ease;
+}
+
+.response-input textarea:focus {
+    outline: none;
+    border-color: #888;
+    background: #fff;
 }
 
 .response-input button {
-    margin-top: 8px;
-    padding: 10px 20px;
+    margin-top: 12px;
+    padding: 12px 24px;
 }
 
 /* GIF Toggle */
 .gif-section {
-    max-width: 900px;
-    margin: 80px auto;
-    padding: 0 16px;
+    margin: 100px auto;
     cursor: pointer;
 }
 
 .gif-image {
     width: 100%;
     display: block;
+    border-radius: 2px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.3s ease;
+}
+
+.gif-section:hover .gif-image {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .gif-text {
-    padding: 40px;
-    border: 1px solid #000;
-    font-size: 16px;
-    line-height: 1.8;
+    padding: 48px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    font-size: 15px;
+    line-height: 1.9;
     min-height: 300px;
     display: flex;
     align-items: center;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    color: #3a3a3a;
 }
 
 .hidden {
@@ -234,33 +289,38 @@ button {
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .container {
-        padding: 24px 12px;
+        padding: 40px 16px;
     }
 
     header {
-        margin-bottom: 48px;
+        margin-bottom: 60px;
     }
 
     h1 {
-        font-size: 20px;
-        letter-spacing: 1px;
+        font-size: 18px;
+        letter-spacing: 2px;
     }
 
     .video-section {
-        margin-bottom: 80px;
+        margin-bottom: 100px;
     }
 
     .gif-section {
-        margin: 48px auto;
+        margin: 60px auto;
     }
 
     .gif-text {
-        padding: 24px;
+        padding: 32px;
         font-size: 14px;
     }
 
     .annotation-input,
-    .response-section {
-        padding: 0 8px;
+    .annotation-display {
+        padding: 16px;
+    }
+
+    button {
+        padding: 8px 16px;
+        font-size: 12px;
     }
 }
