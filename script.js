@@ -25,8 +25,9 @@ const GIFS = [
     }
 ];
 
-// Backend API URL - change to your deployed backend URL
-const API_URL = 'http://localhost:3001/api';
+// Backend API URL - uses relative path for Vercel deployment
+// For local development, run backend separately and use: http://localhost:3001/api
+const API_URL = '/api';
 
 // State management
 let annotations = {};
