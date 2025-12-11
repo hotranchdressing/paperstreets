@@ -2,7 +2,7 @@
 const VIDEOS = [
     { 
         id: 'v1', 
-        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', 
+        url: 'assets/video/interview1.mp4', 
         title: 'Segment One' 
     },
     { 
