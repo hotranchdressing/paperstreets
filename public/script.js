@@ -3,40 +3,161 @@ const SHEET_ID = '1_Szf2HEZgx8l5ro5phSEoS3qvRLOJEdtSNqyHJPcg2U';
 const SHEET_NAME = 'Sheet1';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
-// GIF configuration - add your GIFs here
+// GIFs - Add your actual GIF data here
 const YOUR_GIFS = [
     { 
         id: 'gif1',
-        url: 'assets/callalloo.gif',
-        frames: 60, // approximate number of frames in your GIF
-        text: 'Your interpretive text here'
+        url: 'assets/gif/callalloo.gif',
+        text: 'Visual interpretation of urban growth patterns',
+        themes: ['community', 'gardening']
+    },
+    { 
+        id: 'gif2',
+        url: 'assets/gif/dandelion.gif',
+        text: 'Rhythms of seasonal planting cycles',
+        themes: ['technique', 'future']
+    },
+    { 
+        id: 'gif3',
+        url: 'assets/gif/dancingcollard.gif',
+        text: 'Rhythms of seasonal planting cycles',
+        themes: ['technique', 'future']
+    },
+    { 
+        id: 'gif4',
+        url: 'assets/gif/callalloodrink.gif',
+        text: 'Rhythms of seasonal planting cycles',
+        themes: ['technique', 'future']
+    },
+    { 
+        id: 'gif5',
+        url: 'assets/gif/garlic.gif',
+        text: 'Rhythms of seasonal planting cycles',
+        themes: ['technique', 'future']
+    },
+    { 
+        id: 'gif6',
+        url: 'assets/gif/ladyliberty.gif',
+        text: 'Rhythms of seasonal planting cycles',
+        themes: ['technique', 'future']
+    },
+    { 
+        id: 'gif7',
+        url: 'assets/gif/pepperplant.gif',
+        text: 'Rhythms of seasonal planting cycles',
+        themes: ['technique', 'future']
+    },
+    { 
+        id: 'gif8',
+        url: 'assets/gif/sotomayerhomes.gif',
+        text: 'Rhythms of seasonal planting cycles',
+        themes: ['technique', 'future']
     }
-    // Add more of your GIFs
+    // Add more of your GIFs with associated themes
 ];
 
 const STUDENT_GIFS = [
     {
         id: 'sgif1',
-        url: 'assets/garlic.gif',
-        frames: 60,
-        text: 'Student interpretation here'
-    }
-    // Add more student GIFs
+        url: 'assets/gif/AbdoulBaldeTheSnake.gif',
+        text: 'Abdoul Balde - The Snake',
+        themes: ['community']
+    },
+    {
+        id: 'sgif2',
+        url: 'assets/gif/AlexanderHarrisWormAnimation.gif',
+        text: 'Alexander Harris - Worm Animation',
+        themes: ['practice']
+    },
+    {
+        id: 'sgif3',
+        url: 'assets/gif/AloeAnimationGif.gif',
+        text: 'Karamoko Tounkara - Aloe Animation',
+        themes: ['future']
+    },
+    {
+        id: 'sgif4',
+        url: 'assets/gif/KwameKusiGIF.gif',
+        text: 'Kwame Kusi - Corn Animation',
+        themes: ['politics']
+    },
+    {
+        id: 'sgif5',
+        url: 'assets/gif/LatifGIF.gif',
+        text: 'Latif Latif - Corn Animation',
+        themes: ['health']
+    },
+    {
+        id: 'sgif6',
+        url: 'assets/gif/LeoGIF.gif',
+        text: 'Leo Rodriguez - Corn Animation',
+        themes: ['personal']
+    },
+    // Add student GIFs
 ];
 
-// Convert Google Drive share URL to embed URL
+// State
+let allVideos = [];
+let responses = {};
+let currentView = 'home';
+let currentTheme = null;
+
+// Formal names
+const FORMAL_NAMES = {
+    'qiana': 'Qiana Mickie',
+    'anamaria': 'Dr. Anamaría Flores',
+    'ena': 'Ms. Ena K. McPherson',
+    'kwesi': 'Kwesi Joseph, MBA'
+};
+
+const INTERVIEWEE_COLORS = {
+    'qiana': '#a8b8c5',
+    'anamaria': '#c9b5b8',
+    'ena': '#b8c5b0',
+    'kwesi': '#d4c5a9'
+};
+
+// Main themes with descriptions
+const THEMES = {
+    'community': {
+        name: 'Community',
+        description: 'Gardens as gathering spaces, shared labor, and neighborhood connection',
+        color: '#b8c5b0'
+    },
+    'gardening': {
+        name: 'Practice',
+        description: 'Techniques, methods, soil, compost, and hands-on knowledge',
+        color: '#d4c5a9'
+    },
+    'future': {
+        name: 'Futures',
+        description: 'Visions for food systems, climate resilience, and next generations',
+        color: '#a8b8c5'
+    },
+    'politics': {
+        name: 'Politics',
+        description: 'Power, policy, access, and resistance in urban agriculture',
+        color: '#c9b5b8'
+    },
+    'health': {
+        name: 'Health & Wellness',
+        description: 'Food access, bodily connection to growing, and community wellbeing',
+        color: '#b8d4b0'
+    },
+    'personal': {
+        name: 'Personal Stories',
+        description: 'Individual journeys, motivations, and lived experiences',
+        color: '#d4c5b8'
+    }
+};
+
+// Convert Google Drive URL
 function convertDriveUrl(shareUrl) {
     const fileIdMatch = shareUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
     if (fileIdMatch) {
-        return {
-            embedUrl: `https://drive.google.com/file/d/${fileIdMatch[1]}/preview`,
-            fileId: fileIdMatch[1]
-        };
+        return `https://drive.google.com/file/d/${fileIdMatch[1]}/preview`;
     }
-    return {
-        embedUrl: shareUrl,
-        fileId: null
-    };
+    return shareUrl;
 }
 
 // Fetch videos from Google Sheets
@@ -50,15 +171,13 @@ async function fetchVideosFromSheet() {
         
         const videos = rows.map(row => {
             const cells = row.c;
-            const driveData = convertDriveUrl(cells[5]?.v || '');
             return {
                 id: cells[0]?.v || '',
                 interviewee: cells[1]?.v || '',
                 topics: cells[2]?.v ? cells[2].v.split(',').map(t => t.trim()) : [],
                 duration: parseInt(cells[3]?.v) || 0,
                 title: cells[4]?.v || '',
-                url: driveData.embedUrl,
-                fileId: driveData.fileId
+                url: convertDriveUrl(cells[5]?.v || '')
             };
         }).filter(v => v.id);
         
@@ -69,233 +188,179 @@ async function fetchVideosFromSheet() {
     }
 }
 
-// Calculate topic similarity for clustering
-function topicSimilarity(topics1, topics2) {
-    const set1 = new Set(topics1);
-    const set2 = new Set(topics2);
-    const intersection = new Set([...set1].filter(x => set2.has(x)));
-    const union = new Set([...set1, ...set2]);
-    return intersection.size / union.size;
+// Get videos for a specific theme
+function getVideosForTheme(theme) {
+    return allVideos.filter(v => v.topics.includes(theme));
 }
 
-// Organize videos by topic clusters
-function organizeByTopics(videos) {
-    const organized = [];
-    const used = new Set();
+// Count videos per theme
+function getThemeCounts() {
+    const counts = {};
+    Object.keys(THEMES).forEach(theme => {
+        counts[theme] = allVideos.filter(v => v.topics.includes(theme)).length;
+    });
+    return counts;
+}
+
+// Render homepage with theme cards
+function renderHomepage() {
+    currentView = 'home';
+    const app = document.getElementById('app');
+    const counts = getThemeCounts();
     
-    videos.forEach((video, idx) => {
-        if (used.has(idx)) return;
-        
-        const cluster = [video];
-        used.add(idx);
-        
-        // Find similar videos
-        videos.forEach((other, otherIdx) => {
-            if (used.has(otherIdx)) return;
-            if (topicSimilarity(video.topics, other.topics) > 0.3) {
-                cluster.push(other);
-                used.add(otherIdx);
-            }
-        });
-        
-        organized.push(cluster);
+    // Get one random GIF for homepage
+    const featuredGif = YOUR_GIFS[Math.floor(Math.random() * YOUR_GIFS.length)];
+    
+    app.innerHTML = `
+        <div class="homepage">
+            ${featuredGif ? `
+                <div class="featured-gif" onclick="toggleGifText(this)">
+                    <img src="${featuredGif.url}" alt="Featured visual">
+                    <div class="gif-text hidden">${featuredGif.text}</div>
+                </div>
+            ` : ''}
+            
+            <div class="theme-grid">
+                ${Object.entries(THEMES).map(([key, theme]) => `
+                    <div class="theme-card" onclick="navigateToTheme('${key}')" style="border-color: ${theme.color}">
+                        <h2>${theme.name}</h2>
+                        <p class="theme-description">${theme.description}</p>
+                        <p class="theme-count">${counts[key] || 0} clips</p>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+// Render theme page
+function renderThemePage(themeKey) {
+    currentView = 'theme';
+    currentTheme = themeKey;
+    
+    const theme = THEMES[themeKey];
+    const videos = getVideosForTheme(themeKey);
+    const themeGifs = [...YOUR_GIFS, ...STUDENT_GIFS].filter(gif => 
+        gif.themes && gif.themes.includes(themeKey)
+    );
+    
+    // Group by interviewee
+    const byInterviewee = {};
+    videos.forEach(v => {
+        if (!byInterviewee[v.interviewee]) {
+            byInterviewee[v.interviewee] = [];
+        }
+        byInterviewee[v.interviewee].push(v);
     });
     
-    return organized;
-}
-
-// Color palette
-const INTERVIEWEE_COLORS = {
-    'qiana': '#a8b8c5',
-    'anamaria': '#c9b5b8',
-    'ena': '#b8c5b0',
-    'kwesi': '#d4c5a9'
-};
-
-const FORMAL_NAMES = {
-    'qiana': 'Qiana Mickie',
-    'anamaria': 'Dr. Anamaría Flores',
-    'ena': 'Ms. Ena K. McPherson',
-    'kwesi': 'Kwesi Joseph, MBA'
-};
-
-// Render horizontal grid
-function renderHorizontalGrid(videoClusters) {
-    const container = document.getElementById('video-container');
-    container.innerHTML = '';
-    
-    let xOffset = 100; // Start position
-    
-    videoClusters.forEach((cluster, clusterIdx) => {
-        const clusterDiv = document.createElement('div');
-        clusterDiv.className = 'video-cluster';
-        clusterDiv.style.left = `${xOffset}px`;
-        
-        cluster.forEach((video, idx) => {
-            const tile = createVideoTile(video, idx);
-            clusterDiv.appendChild(tile);
-        });
-        
-        container.appendChild(clusterDiv);
-        
-        // Space between clusters
-        xOffset += 400 + (cluster.length * 50);
+    // Sort each group by duration (shortest first)
+    Object.values(byInterviewee).forEach(group => {
+        group.sort((a, b) => a.duration - b.duration);
     });
     
-    // Set total width for horizontal scroll
-    container.style.width = `${xOffset + 200}px`;
+    const app = document.getElementById('app');
+    
+    app.innerHTML = `
+        <div class="theme-page">
+            <nav class="breadcrumb">
+                <span onclick="navigateToHome()" class="breadcrumb-link">Home</span>
+                <span class="breadcrumb-separator">→</span>
+                <span>${theme.name}</span>
+            </nav>
+            
+            <header class="theme-header">
+                <h1>${theme.name}</h1>
+                <p>${theme.description}</p>
+                <p class="clip-count">${videos.length} clips</p>
+            </header>
+            
+            <div class="theme-content">
+                ${Object.entries(byInterviewee).map(([interviewee, clips], idx) => `
+                    <div class="speaker-section">
+                        <h3 class="speaker-name" style="color: ${INTERVIEWEE_COLORS[interviewee]}">${FORMAL_NAMES[interviewee] || interviewee}</h3>
+                        
+                        <div class="clips-grid">
+                            ${clips.map(video => renderVideoTile(video)).join('')}
+                        </div>
+                    </div>
+                    
+                    ${themeGifs[idx] ? `
+                        <div class="theme-gif" onclick="toggleGifText(this)">
+                            <img src="${themeGifs[idx].url}" alt="Visual interpretation">
+                            <div class="gif-text hidden">${themeGifs[idx].text}</div>
+                        </div>
+                    ` : ''}
+                `).join('')}
+            </div>
+        </div>
+    `;
 }
 
-// Create video tile
-function createVideoTile(video, positionInCluster) {
-    const maxDuration = 319; // From your data
+// Render video tile
+function renderVideoTile(video) {
+    const maxDuration = 319;
     const minDuration = 13;
     const normalizedDuration = (video.duration - minDuration) / (maxDuration - minDuration);
-    const size = 150 + (1 - normalizedDuration) * 200; // 150-350px
+    const size = 120 + (1 - normalizedDuration) * 100; // 120-220px
     
-    const tile = document.createElement('div');
-    tile.className = 'video-tile';
-    tile.style.width = `${size}px`;
-    tile.style.height = `${size}px`;
-    tile.style.backgroundColor = INTERVIEWEE_COLORS[video.interviewee] || '#e0e0e0';
-    
-    // Vertical offset within cluster
-    tile.style.top = `${positionInCluster * 80}px`;
-    
-    const displayName = FORMAL_NAMES[video.interviewee] || video.interviewee;
-    
-    tile.innerHTML = `
-        <div class="tile-overlay">
-            <div class="tile-title">${video.title}</div>
-            <div class="tile-meta">
-                <div>${displayName}</div>
-                <div>${Math.floor(video.duration / 60)}:${(video.duration % 60).toString().padStart(2, '0')}</div>
+    return `
+        <div class="video-tile" 
+             onclick="openVideo('${video.id}')"
+             style="width: ${size}px; height: ${size}px; background-color: ${INTERVIEWEE_COLORS[video.interviewee]}">
+            <div class="tile-overlay">
+                <div class="tile-title">${video.title}</div>
+                <div class="tile-duration">${Math.floor(video.duration / 60)}:${(video.duration % 60).toString().padStart(2, '0')}</div>
             </div>
-            <div class="tile-topics">${video.topics.slice(0, 3).join(', ')}</div>
         </div>
     `;
-    
-    tile.addEventListener('click', () => openVideo(video));
-    
-    return tile;
 }
 
-// Render GIFs with scroll scrubbing
-function renderScrollGIFs() {
-    const container = document.getElementById('gif-layer');
-    container.innerHTML = '';
-    
-    // Your GIFs - larger, positioned strategically
-    YOUR_GIFS.forEach((gif, idx) => {
-        const gifEl = createScrollGIF(gif, 'your-gif', idx * 800 + 300, 100);
-        container.appendChild(gifEl);
-    });
-    
-    // Student GIFs - smaller, scattered
-    STUDENT_GIFS.forEach((gif, idx) => {
-        const gifEl = createScrollGIF(gif, 'student-gif', idx * 600 + 500, 400);
-        container.appendChild(gifEl);
-    });
+// Navigation functions
+function navigateToHome() {
+    renderHomepage();
+    window.scrollTo(0, 0);
 }
 
-function createScrollGIF(gifData, className, xPos, yPos) {
-    const wrapper = document.createElement('div');
-    wrapper.className = `gif-wrapper ${className}`;
-    wrapper.style.left = `${xPos}px`;
-    wrapper.style.top = `${yPos}px`;
-    wrapper.dataset.frames = gifData.frames;
-    wrapper.dataset.gifId = gifData.id;
-    
-    const img = document.createElement('img');
-    img.src = gifData.url;
-    img.className = 'scroll-gif';
-    
-    wrapper.appendChild(img);
-    
-    // Click to toggle text
-    wrapper.addEventListener('click', () => {
-        if (wrapper.classList.contains('showing-text')) {
-            wrapper.classList.remove('showing-text');
-            wrapper.innerHTML = '';
-            wrapper.appendChild(img);
-        } else {
-            wrapper.classList.add('showing-text');
-            wrapper.innerHTML = `<div class="gif-text">${gifData.text}</div>`;
-        }
-    });
-    
-    return wrapper;
+function navigateToTheme(themeKey) {
+    renderThemePage(themeKey);
+    window.scrollTo(0, 0);
 }
 
-// Handle horizontal scroll and GIF scrubbing
-let lastScrollX = 0;
-
-function handleScroll() {
-    const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
-    const scrollDelta = scrollX - lastScrollX;
-    lastScrollX = scrollX;
+// Toggle GIF text
+function toggleGifText(element) {
+    const img = element.querySelector('img');
+    const text = element.querySelector('.gif-text');
     
-    // Update GIF frames based on scroll position
-    document.querySelectorAll('.gif-wrapper').forEach(wrapper => {
-        const frames = parseInt(wrapper.dataset.frames) || 20;
-        const img = wrapper.querySelector('.scroll-gif');
-        
-        if (img) {
-            // Calculate which frame to show based on scroll position
-            // This is a simplified version - actual implementation would need
-            // to extract individual frames from the GIF
-            const scrollProgress = scrollX / 100;
-            const currentFrame = Math.floor(scrollProgress % frames);
-            
-            // For now, rotate the GIF slightly based on scroll
-            // (Real implementation would show actual frames)
-            const rotation = (scrollProgress * 5) % 360;
-            img.style.transform = `rotate(${rotation}deg)`;
-        }
-    });
+    if (text.classList.contains('hidden')) {
+        img.classList.add('hidden');
+        text.classList.remove('hidden');
+    } else {
+        text.classList.add('hidden');
+        img.classList.remove('hidden');
+    }
 }
 
-// Build filter UI
-function buildFilterUI(videos) {
-    const allTopics = new Set();
-    videos.forEach(v => v.topics.forEach(t => allTopics.add(t)));
+// Open video modal
+function openVideo(videoId) {
+    const video = allVideos.find(v => v.id === videoId);
+    if (!video) return;
     
-    const filterContainer = document.getElementById('filter-controls');
-    const sortedTopics = Array.from(allTopics).sort();
-    
-    filterContainer.innerHTML = `
-        <div class="filter-label">Filter by topic:</div>
-        <div class="filter-tags">
-            ${sortedTopics.map(topic => `
-                <button class="filter-tag" data-topic="${topic}">${topic}</button>
-            `).join('')}
-        </div>
-        <button class="clear-filters" onclick="clearFilters()">Clear All</button>
-    `;
-}
-
-function clearFilters() {
-    document.querySelectorAll('.filter-tag').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelectorAll('.video-tile').forEach(tile => {
-        tile.style.opacity = '1';
-        tile.style.transform = tile.style.transform.replace(/scale\([^)]*\)/, 'scale(1)');
-    });
-}
-
-// Video modal
-function openVideo(video) {
     const modal = document.getElementById('video-modal');
     const modalContent = document.getElementById('modal-video-content');
     
     const displayName = FORMAL_NAMES[video.interviewee] || video.interviewee;
+    
+    // Get related videos (share at least one topic, exclude current)
+    const relatedVideos = allVideos
+        .filter(v => v.id !== video.id && v.topics.some(t => video.topics.includes(t)))
+        .slice(0, 3);
     
     modalContent.innerHTML = `
         <div class="modal-header">
             <h2>${video.title}</h2>
             <button class="close-modal" onclick="closeVideoModal()">×</button>
         </div>
+        
         <iframe 
             src="${video.url}" 
             width="100%" 
@@ -303,22 +368,36 @@ function openVideo(video) {
             allow="autoplay"
             style="border: none; background: #000;">
         </iframe>
+        
         <div class="modal-meta">
             <div><strong>${displayName}</strong></div>
             <div class="modal-topics">${video.topics.join(' • ')}</div>
         </div>
         
-        <div class="response-section">
-            <div class="response-divider">
-                <div class="response-list" id="${video.id}-responses"></div>
-                
-                <div class="response-input">
-                    <textarea 
-                        id="${video.id}-response-text" 
-                        placeholder="Add to the conversation..."
-                    ></textarea>
-                    <button class="btn-primary" id="${video.id}-submit-response">Continue Chain</button>
+        ${relatedVideos.length > 0 ? `
+            <div class="related-clips">
+                <h4>Related clips</h4>
+                <div class="related-grid">
+                    ${relatedVideos.map(v => `
+                        <div class="related-clip" onclick="openVideo('${v.id}')">
+                            <div class="related-title">${v.title}</div>
+                            <div class="related-speaker">${FORMAL_NAMES[v.interviewee]}</div>
+                        </div>
+                    `).join('')}
                 </div>
+            </div>
+        ` : ''}
+        
+        <div class="response-section">
+            <h4>Conversation</h4>
+            <div class="response-list" id="${video.id}-responses"></div>
+            
+            <div class="response-input">
+                <textarea 
+                    id="${video.id}-response-text" 
+                    placeholder="Add to the conversation..."
+                ></textarea>
+                <button class="btn-primary" id="${video.id}-submit-response">Continue Chain</button>
             </div>
         </div>
     `;
@@ -342,8 +421,6 @@ function closeVideoModal() {
 }
 
 // Response system
-let responses = {};
-
 async function loadResponses() {
     try {
         const res = await fetch('/api/responses');
@@ -448,16 +525,10 @@ function escapeHtml(text) {
 // Initialize
 async function init() {
     await loadResponses();
-    const videos = await fetchVideosFromSheet();
-    console.log(`Loaded ${videos.length} videos from sheet`);
+    allVideos = await fetchVideosFromSheet();
+    console.log(`Loaded ${allVideos.length} videos`);
     
-    const videoClusters = organizeByTopics(videos);
-    renderHorizontalGrid(videoClusters);
-    renderScrollGIFs();
-    buildFilterUI(videos);
-    
-    // Enable horizontal scroll
-    window.addEventListener('scroll', handleScroll);
+    renderHomepage();
 }
 
 document.addEventListener('DOMContentLoaded', init);
