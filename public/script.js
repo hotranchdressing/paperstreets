@@ -3,16 +3,26 @@ const SHEET_ID = '1_Szf2HEZgx8l5ro5phSEoS3qvRLOJEdtSNqyHJPcg2U';
 const SHEET_NAME = 'Sheet1';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
-// Physics configuration
-const PHYSICS = {
-    damping: 0.95,           // Friction/air resistance
-    repulsion: 50000,        // Force pushing tiles apart
-    rightwardDrift: 0.5,     // Constant push to the right
-    topicGravity: 0.3,       // Base attraction between similar topics
-    minDistance: 150,        // Minimum spacing between tiles
-    maxSpeed: 2,             // Maximum velocity
-    timeStep: 1/60           // Physics update rate
-};
+// GIF configuration - add your GIFs here
+const YOUR_GIFS = [
+    { 
+        id: 'gif1',
+        url: 'assets/callalloo.gif',
+        frames: 60, // approximate number of frames in your GIF
+        text: 'Your interpretive text here'
+    }
+    // Add more of your GIFs
+];
+
+const STUDENT_GIFS = [
+    {
+        id: 'sgif1',
+        url: 'assets/garlic.gif',
+        frames: 60,
+        text: 'Student interpretation here'
+    }
+    // Add more student GIFs
+];
 
 // Convert Google Drive share URL to embed URL
 function convertDriveUrl(shareUrl) {
@@ -29,7 +39,7 @@ function convertDriveUrl(shareUrl) {
     };
 }
 
-// Fetch and parse Google Sheets data
+// Fetch videos from Google Sheets
 async function fetchVideosFromSheet() {
     try {
         const response = await fetch(SHEET_URL);
@@ -59,254 +69,190 @@ async function fetchVideosFromSheet() {
     }
 }
 
-// Calculate topic frequencies and gravity values
-function calculateTopicGravity(videos) {
-    const topicCounts = {};
-    
-    videos.forEach(video => {
-        video.topics.forEach(topic => {
-            topicCounts[topic] = (topicCounts[topic] || 0) + 1;
-        });
-    });
-    
-    // More common topics = stronger gravity
-    const maxCount = Math.max(...Object.values(topicCounts));
-    const topicGravity = {};
-    
-    Object.keys(topicCounts).forEach(topic => {
-        // Normalize: common topics (0.5-1.0), rare topics (0.2-0.5)
-        const frequency = topicCounts[topic] / maxCount;
-        topicGravity[topic] = 0.3 + (frequency * 0.7);
-    });
-    
-    return topicGravity;
+// Calculate topic similarity for clustering
+function topicSimilarity(topics1, topics2) {
+    const set1 = new Set(topics1);
+    const set2 = new Set(topics2);
+    const intersection = new Set([...set1].filter(x => set2.has(x)));
+    const union = new Set([...set1, ...set2]);
+    return intersection.size / union.size;
 }
 
-// Calculate topic centers (average position of all clips with that topic)
-function calculateTopicCenters(particles, topicGravity) {
-    const centers = {};
-    const counts = {};
+// Organize videos by topic clusters
+function organizeByTopics(videos) {
+    const organized = [];
+    const used = new Set();
     
-    // Initialize
-    Object.keys(topicGravity).forEach(topic => {
-        centers[topic] = { x: 0, y: 0 };
-        counts[topic] = 0;
-    });
-    
-    // Sum positions
-    particles.forEach(p => {
-        p.video.topics.forEach(topic => {
-            centers[topic].x += p.x;
-            centers[topic].y += p.y;
-            counts[topic]++;
-        });
-    });
-    
-    // Average
-    Object.keys(centers).forEach(topic => {
-        if (counts[topic] > 0) {
-            centers[topic].x /= counts[topic];
-            centers[topic].y /= counts[topic];
-        }
-    });
-    
-    return centers;
-}
-
-// Create particle system
-function createParticleSystem(videos, topicGravity) {
-    const particles = [];
-    const maxDuration = Math.max(...videos.map(v => v.duration));
-    const minDuration = Math.min(...videos.map(v => v.duration));
-    
-    const viewWidth = window.innerWidth;
-    const viewHeight = Math.max(2000, videos.length * 80);
-    
-    videos.forEach((video, index) => {
-        // Inverse sizing: shorter = bigger
-        const normalizedDuration = (video.duration - minDuration) / (maxDuration - minDuration);
-        const size = 150 + (1 - normalizedDuration) * 200; // 150-350px range
+    videos.forEach((video, idx) => {
+        if (used.has(idx)) return;
         
-        // Initial random position (will be organized by physics)
-        const x = Math.random() * (viewWidth - size);
-        const y = Math.random() * (viewHeight - size);
+        const cluster = [video];
+        used.add(idx);
         
-        particles.push({
-            video,
-            x,
-            y,
-            vx: 0,
-            vy: 0,
-            size,
-            mass: size / 100, // Bigger tiles = more mass
-            opacity: 1,
-            scale: 1
-        });
-    });
-    
-    return particles;
-}
-
-// Physics update
-function updatePhysics(particles, topicGravity, topicCenters, activeFilters) {
-    const viewWidth = window.innerWidth;
-    const viewHeight = document.getElementById('floating-grid').offsetHeight;
-    
-    particles.forEach((p, i) => {
-        let fx = 0, fy = 0;
-        
-        // 1. Repulsion from other particles (personal space)
-        particles.forEach((other, j) => {
-            if (i === j) return;
-            
-            const dx = p.x - other.x;
-            const dy = p.y - other.y;
-            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            
-            if (dist < PHYSICS.minDistance) {
-                const force = PHYSICS.repulsion / (dist * dist);
-                fx += (dx / dist) * force;
-                fy += (dy / dist) * force;
+        // Find similar videos
+        videos.forEach((other, otherIdx) => {
+            if (used.has(otherIdx)) return;
+            if (topicSimilarity(video.topics, other.topics) > 0.3) {
+                cluster.push(other);
+                used.add(otherIdx);
             }
         });
         
-        // 2. Topic gravity - attraction to topic centers (lateral only)
-        p.video.topics.forEach(topic => {
-            if (!topicCenters[topic]) return;
-            
-            const center = topicCenters[topic];
-            const dx = center.x - p.x;
-            const dy = center.y - p.y;
-            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            
-            const gravity = topicGravity[topic] || 0.5;
-            
-            // If this topic is filtered, increase gravity significantly
-            const gravityMultiplier = activeFilters.has(topic) ? 5.0 : 1.0;
-            
-            const force = PHYSICS.topicGravity * gravity * gravityMultiplier * p.mass;
-            fx += (dx / dist) * force;
-            fy += (dy / dist) * force;
-        });
-        
-        // 3. Constant rightward drift
-        fx += PHYSICS.rightwardDrift;
-        
-        // 4. Keep vertically centered (soft constraint)
-        const verticalCenter = viewHeight / 2;
-        const toCenter = verticalCenter - p.y;
-        fy += toCenter * 0.001; // Gentle vertical centering
-        
-        // Update velocity
-        p.vx += fx * PHYSICS.timeStep;
-        p.vy += fy * PHYSICS.timeStep;
-        
-        // Apply damping
-        p.vx *= PHYSICS.damping;
-        p.vy *= PHYSICS.damping;
-        
-        // Limit max speed
-        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-        if (speed > PHYSICS.maxSpeed) {
-            p.vx = (p.vx / speed) * PHYSICS.maxSpeed;
-            p.vy = (p.vy / speed) * PHYSICS.maxSpeed;
-        }
-        
-        // Update position
-        p.x += p.vx;
-        p.y += p.vy;
-        
-        // Wraparound horizontally - when leaving right edge, reappear on left
-        if (p.x > viewWidth + 50) {
-            p.x = -p.size - 50;
-        }
-        if (p.x < -p.size - 50) {
-            p.x = viewWidth + 50;
-        }
-        
-        // Keep within vertical bounds
-        p.y = Math.max(50, Math.min(viewHeight - p.size - 50, p.y));
-        
-        // Update opacity based on filters
-        if (activeFilters.size > 0) {
-            const hasActiveTopics = p.video.topics.some(t => activeFilters.has(t));
-            p.opacity = hasActiveTopics ? 1.0 : 0.3;
-            p.scale = hasActiveTopics ? 1.0 : 0.8;
-        } else {
-            p.opacity = 1.0;
-            p.scale = 1.0;
-        }
+        organized.push(cluster);
     });
-}
-
-// Render particles
-function renderParticles(particles) {
-    const container = document.getElementById('floating-grid');
     
-    // Map short names to formal names
-    const formalNames = {
-        'qiana': 'Qiana Mickie',
-        'anamaria': 'Dr. Anamaría Flores',
-        'ena': 'Ms. Ena K. McPherson',
-        'kwesi': 'Kwesi Joseph, MBA'
-    };
-    
-    particles.forEach(p => {
-        let tile = document.getElementById(`tile-${p.video.id}`);
-        
-        if (!tile) {
-            const displayName = formalNames[p.video.interviewee] || p.video.interviewee;
-            
-            // Create tile
-            tile = document.createElement('div');
-            tile.id = `tile-${p.video.id}`;
-            tile.className = 'video-tile';
-            tile.style.backgroundColor = INTERVIEWEE_COLORS[p.video.interviewee] || '#e0e0e0';
-            
-            tile.innerHTML = `
-                <div class="tile-overlay">
-                    <div class="tile-title">${p.video.title}</div>
-                    <div class="tile-meta">
-                        <div>${displayName}</div>
-                        <div>${Math.floor(p.video.duration / 60)}:${(p.video.duration % 60).toString().padStart(2, '0')}</div>
-                    </div>
-                    <div class="tile-topics">${p.video.topics.slice(0, 3).join(', ')}</div>
-                </div>
-            `;
-            
-            tile.addEventListener('click', () => openVideo(p.video));
-            container.appendChild(tile);
-        }
-        
-        // Update position and style
-        tile.style.transform = `translate(${p.x}px, ${p.y}px) scale(${p.scale})`;
-        tile.style.width = `${p.size}px`;
-        tile.style.height = `${p.size}px`;
-        tile.style.opacity = p.opacity;
-    });
+    return organized;
 }
 
 // Color palette
 const INTERVIEWEE_COLORS = {
-    'qiana': '#a8b8c5',          // soft slate - Qiana Mickie
-    'anamaria': '#c9b5b8',       // dusty rose - Dr. Anamaría Flores
-    'ena': '#b8c5b0',            // sage green - Ms. Ena K. McPherson
-    'kwesi': '#d4c5a9'           // warm sand - Kwesi Joseph, MBA
+    'qiana': '#a8b8c5',
+    'anamaria': '#c9b5b8',
+    'ena': '#b8c5b0',
+    'kwesi': '#d4c5a9'
 };
 
-// State
-let particles = [];
-let topicGravity = {};
-let topicCenters = {};
-let activeFilters = new Set();
-let animationId = null;
+const FORMAL_NAMES = {
+    'qiana': 'Qiana Mickie',
+    'anamaria': 'Dr. Anamaría Flores',
+    'ena': 'Ms. Ena K. McPherson',
+    'kwesi': 'Kwesi Joseph, MBA'
+};
 
-// Animation loop
-function animate() {
-    topicCenters = calculateTopicCenters(particles, topicGravity);
-    updatePhysics(particles, topicGravity, topicCenters, activeFilters);
-    renderParticles(particles);
-    animationId = requestAnimationFrame(animate);
+// Render horizontal grid
+function renderHorizontalGrid(videoClusters) {
+    const container = document.getElementById('video-container');
+    container.innerHTML = '';
+    
+    let xOffset = 100; // Start position
+    
+    videoClusters.forEach((cluster, clusterIdx) => {
+        const clusterDiv = document.createElement('div');
+        clusterDiv.className = 'video-cluster';
+        clusterDiv.style.left = `${xOffset}px`;
+        
+        cluster.forEach((video, idx) => {
+            const tile = createVideoTile(video, idx);
+            clusterDiv.appendChild(tile);
+        });
+        
+        container.appendChild(clusterDiv);
+        
+        // Space between clusters
+        xOffset += 400 + (cluster.length * 50);
+    });
+    
+    // Set total width for horizontal scroll
+    container.style.width = `${xOffset + 200}px`;
+}
+
+// Create video tile
+function createVideoTile(video, positionInCluster) {
+    const maxDuration = 319; // From your data
+    const minDuration = 13;
+    const normalizedDuration = (video.duration - minDuration) / (maxDuration - minDuration);
+    const size = 150 + (1 - normalizedDuration) * 200; // 150-350px
+    
+    const tile = document.createElement('div');
+    tile.className = 'video-tile';
+    tile.style.width = `${size}px`;
+    tile.style.height = `${size}px`;
+    tile.style.backgroundColor = INTERVIEWEE_COLORS[video.interviewee] || '#e0e0e0';
+    
+    // Vertical offset within cluster
+    tile.style.top = `${positionInCluster * 80}px`;
+    
+    const displayName = FORMAL_NAMES[video.interviewee] || video.interviewee;
+    
+    tile.innerHTML = `
+        <div class="tile-overlay">
+            <div class="tile-title">${video.title}</div>
+            <div class="tile-meta">
+                <div>${displayName}</div>
+                <div>${Math.floor(video.duration / 60)}:${(video.duration % 60).toString().padStart(2, '0')}</div>
+            </div>
+            <div class="tile-topics">${video.topics.slice(0, 3).join(', ')}</div>
+        </div>
+    `;
+    
+    tile.addEventListener('click', () => openVideo(video));
+    
+    return tile;
+}
+
+// Render GIFs with scroll scrubbing
+function renderScrollGIFs() {
+    const container = document.getElementById('gif-layer');
+    container.innerHTML = '';
+    
+    // Your GIFs - larger, positioned strategically
+    YOUR_GIFS.forEach((gif, idx) => {
+        const gifEl = createScrollGIF(gif, 'your-gif', idx * 800 + 300, 100);
+        container.appendChild(gifEl);
+    });
+    
+    // Student GIFs - smaller, scattered
+    STUDENT_GIFS.forEach((gif, idx) => {
+        const gifEl = createScrollGIF(gif, 'student-gif', idx * 600 + 500, 400);
+        container.appendChild(gifEl);
+    });
+}
+
+function createScrollGIF(gifData, className, xPos, yPos) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `gif-wrapper ${className}`;
+    wrapper.style.left = `${xPos}px`;
+    wrapper.style.top = `${yPos}px`;
+    wrapper.dataset.frames = gifData.frames;
+    wrapper.dataset.gifId = gifData.id;
+    
+    const img = document.createElement('img');
+    img.src = gifData.url;
+    img.className = 'scroll-gif';
+    
+    wrapper.appendChild(img);
+    
+    // Click to toggle text
+    wrapper.addEventListener('click', () => {
+        if (wrapper.classList.contains('showing-text')) {
+            wrapper.classList.remove('showing-text');
+            wrapper.innerHTML = '';
+            wrapper.appendChild(img);
+        } else {
+            wrapper.classList.add('showing-text');
+            wrapper.innerHTML = `<div class="gif-text">${gifData.text}</div>`;
+        }
+    });
+    
+    return wrapper;
+}
+
+// Handle horizontal scroll and GIF scrubbing
+let lastScrollX = 0;
+
+function handleScroll() {
+    const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+    const scrollDelta = scrollX - lastScrollX;
+    lastScrollX = scrollX;
+    
+    // Update GIF frames based on scroll position
+    document.querySelectorAll('.gif-wrapper').forEach(wrapper => {
+        const frames = parseInt(wrapper.dataset.frames) || 20;
+        const img = wrapper.querySelector('.scroll-gif');
+        
+        if (img) {
+            // Calculate which frame to show based on scroll position
+            // This is a simplified version - actual implementation would need
+            // to extract individual frames from the GIF
+            const scrollProgress = scrollX / 100;
+            const currentFrame = Math.floor(scrollProgress % frames);
+            
+            // For now, rotate the GIF slightly based on scroll
+            // (Real implementation would show actual frames)
+            const rotation = (scrollProgress * 5) % 360;
+            img.style.transform = `rotate(${rotation}deg)`;
+        }
+    });
 }
 
 // Build filter UI
@@ -326,43 +272,24 @@ function buildFilterUI(videos) {
         </div>
         <button class="clear-filters" onclick="clearFilters()">Clear All</button>
     `;
-    
-    // Add click handlers
-    document.querySelectorAll('.filter-tag').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const topic = btn.dataset.topic;
-            if (activeFilters.has(topic)) {
-                activeFilters.delete(topic);
-                btn.classList.remove('active');
-            } else {
-                activeFilters.add(topic);
-                btn.classList.add('active');
-            }
-        });
-    });
 }
 
 function clearFilters() {
-    activeFilters.clear();
     document.querySelectorAll('.filter-tag').forEach(btn => {
         btn.classList.remove('active');
     });
+    document.querySelectorAll('.video-tile').forEach(tile => {
+        tile.style.opacity = '1';
+        tile.style.transform = tile.style.transform.replace(/scale\([^)]*\)/, 'scale(1)');
+    });
 }
 
-// Open video modal
+// Video modal
 function openVideo(video) {
     const modal = document.getElementById('video-modal');
     const modalContent = document.getElementById('modal-video-content');
     
-    // Map short names to formal names
-    const formalNames = {
-        'qiana': 'Qiana Mickie',
-        'anamaria': 'Dr. Anamaría Flores',
-        'ena': 'Ms. Ena K. McPherson',
-        'kwesi': 'Kwesi Joseph, MBA'
-    };
-    
-    const displayName = formalNames[video.interviewee] || video.interviewee;
+    const displayName = FORMAL_NAMES[video.interviewee] || video.interviewee;
     
     modalContent.innerHTML = `
         <div class="modal-header">
@@ -414,7 +341,7 @@ function closeVideoModal() {
     }
 }
 
-// Response system (from original)
+// Response system
 let responses = {};
 
 async function loadResponses() {
@@ -524,17 +451,13 @@ async function init() {
     const videos = await fetchVideosFromSheet();
     console.log(`Loaded ${videos.length} videos from sheet`);
     
-    topicGravity = calculateTopicGravity(videos);
-    particles = createParticleSystem(videos, topicGravity);
-    
+    const videoClusters = organizeByTopics(videos);
+    renderHorizontalGrid(videoClusters);
+    renderScrollGIFs();
     buildFilterUI(videos);
     
-    // Set grid height
-    const container = document.getElementById('floating-grid');
-    container.style.height = `${Math.max(2000, videos.length * 80)}px`;
-    
-    // Start animation
-    animate();
+    // Enable horizontal scroll
+    window.addEventListener('scroll', handleScroll);
 }
 
 document.addEventListener('DOMContentLoaded', init);

@@ -9,92 +9,76 @@ body {
     background: #fafafa;
     color: #2a2a2a;
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    overflow-y: hidden; /* Only horizontal scroll */
+    overflow-x: auto;
+    height: 100vh;
 }
 
-.container {
-    min-height: 100vh;
-    padding: 40px 20px;
+.scroll-container {
+    position: relative;
+    height: 100vh;
+    display: inline-block;
 }
 
 header {
-    text-align: center;
-    margin-bottom: 60px;
-    position: relative;
-    z-index: 10;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #fafafa;
+    padding: 30px 40px;
+    z-index: 1000;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 h1 {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: normal;
     letter-spacing: 6px;
     color: #3a3a3a;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .subtitle {
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: 3px;
     color: #888;
     text-transform: uppercase;
-}
-
-/* Floating Grid */
-.floating-grid {
-    position: relative;
-    width: 100%;
-    min-height: 2000px;
-}
-
-.video-tile {
-    position: absolute;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: opacity 0.5s ease, transform 0.05s linear, box-shadow 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    will-change: transform, opacity;
-}
-
-.video-tile:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    z-index: 100;
+    margin-bottom: 20px;
 }
 
 /* Filter Controls */
 .filter-controls {
-    margin-top: 40px;
-    padding: 24px;
+    margin-top: 20px;
+    padding: 16px 20px;
     background: #fff;
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    max-width: 90vw;
 }
 
 .filter-label {
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 2px;
     color: #888;
     text-transform: uppercase;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .filter-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 6px;
+    margin-bottom: 12px;
 }
 
 .filter-tag {
-    padding: 6px 14px;
-    font-size: 12px;
+    padding: 5px 12px;
+    font-size: 11px;
     font-family: 'Courier New', monospace;
     background: #fafafa;
     border: 1px solid #d5d5d5;
-    border-radius: 20px;
+    border-radius: 16px;
     cursor: pointer;
     transition: all 0.2s ease;
     color: #5a5a5a;
@@ -112,8 +96,8 @@ h1 {
 }
 
 .clear-filters {
-    padding: 8px 16px;
-    font-size: 11px;
+    padding: 6px 14px;
+    font-size: 10px;
     font-family: 'Courier New', monospace;
     background: #fff;
     border: 1px solid #d5d5d5;
@@ -129,6 +113,39 @@ h1 {
     background: #f5f5f5;
     border-color: #999;
     color: #5a5a5a;
+}
+
+/* Video Container - Horizontal Layout */
+.video-container {
+    position: absolute;
+    top: 200px; /* Below header */
+    left: 0;
+    height: calc(100vh - 200px);
+    display: inline-block;
+}
+
+.video-cluster {
+    position: absolute;
+    top: 0;
+    height: 100%;
+}
+
+.video-tile {
+    position: absolute;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.video-tile:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: scale(1.05);
+    z-index: 100;
 }
 
 .tile-overlay {
@@ -154,17 +171,17 @@ h1 {
 }
 
 .tile-title {
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.4;
     color: #fff;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     font-weight: normal;
 }
 
 .tile-meta {
-    font-size: 11px;
+    font-size: 10px;
     color: #ccc;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .tile-meta div {
@@ -172,11 +189,61 @@ h1 {
 }
 
 .tile-topics {
-    font-size: 10px;
+    font-size: 9px;
     color: #aaa;
     text-transform: lowercase;
     max-width: 90%;
     line-height: 1.3;
+}
+
+/* GIF Layer */
+.gif-layer {
+    position: absolute;
+    top: 200px;
+    left: 0;
+    height: calc(100vh - 200px);
+    pointer-events: none; /* Allow clicking through to videos */
+}
+
+.gif-wrapper {
+    position: absolute;
+    cursor: pointer;
+    pointer-events: all;
+    transition: opacity 0.3s ease;
+}
+
+.your-gif {
+    width: 300px;
+    height: 300px;
+}
+
+.student-gif {
+    width: 180px;
+    height: 180px;
+    opacity: 0.8;
+}
+
+.scroll-gif {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.1s linear;
+}
+
+.gif-wrapper.showing-text {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.gif-text {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #3a3a3a;
 }
 
 /* Video Modal */
@@ -188,7 +255,7 @@ h1 {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.9);
-    z-index: 1000;
+    z-index: 2000;
     align-items: center;
     justify-content: center;
     padding: 20px;
@@ -253,7 +320,6 @@ h1 {
 .modal-meta strong {
     color: #3a3a3a;
     font-weight: normal;
-    text-transform: capitalize;
 }
 
 .modal-topics {
@@ -262,7 +328,7 @@ h1 {
     font-size: 12px;
 }
 
-/* Response Section (reusing from original) */
+/* Response Section */
 .response-section {
     padding: 24px;
 }
@@ -341,69 +407,20 @@ h1 {
     cursor: wait;
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-    .container {
-        padding: 24px 12px;
-    }
-
-    h1 {
-        font-size: 24px;
-        letter-spacing: 4px;
-    }
-
-    .subtitle {
-        font-size: 11px;
-        letter-spacing: 2px;
-    }
-
-    .video-tile {
-        /* On mobile, tiles will be repositioned by JavaScript */
-    }
-
-    .tile-overlay {
-        opacity: 1;
-        background: rgba(0, 0, 0, 0.7);
-        padding: 12px;
-    }
-
-    .tile-title {
-        font-size: 12px;
-    }
-
-    .tile-meta {
-        font-size: 10px;
-    }
-
-    .modal-content {
-        max-height: 95vh;
-    }
-
-    .modal-header {
-        padding: 16px;
-    }
-
-    .modal-header h2 {
-        font-size: 16px;
-    }
-
-    .modal-meta {
-        padding: 16px;
-    }
-
-    .response-section {
-        padding: 16px;
-    }
+/* Horizontal scrollbar styling */
+::-webkit-scrollbar {
+    height: 12px;
 }
 
-/* Loading state */
-.floating-grid:empty::after {
-    content: 'Loading videos...';
-    position: absolute;
-    top: 100px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #999;
-    font-size: 14px;
-    letter-spacing: 2px;
+::-webkit-scrollbar-track {
+    background: #f0f0f0;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a0a0a0;
 }
