@@ -92,6 +92,7 @@ body {
     display: block;
     color: inherit;
     text-align: center;
+    overflow: visible;
 }
 
 .theme-card:hover {
