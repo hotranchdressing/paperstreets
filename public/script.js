@@ -7,7 +7,7 @@ const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq
 const PHYSICS = {
     damping: 0.95,           // Friction/air resistance
     repulsion: 50000,        // Force pushing tiles apart
-    centerPull: 0.0005,      // Gentle pull toward screen center
+    rightwardDrift: 0.5,     // Constant push to the right
     topicGravity: 0.3,       // Base attraction between similar topics
     minDistance: 150,        // Minimum spacing between tiles
     maxSpeed: 2,             // Maximum velocity
@@ -170,7 +170,7 @@ function updatePhysics(particles, topicGravity, topicCenters, activeFilters) {
             }
         });
         
-        // 2. Topic gravity - attraction to topic centers
+        // 2. Topic gravity - attraction to topic centers (lateral only)
         p.video.topics.forEach(topic => {
             if (!topicCenters[topic]) return;
             
@@ -189,13 +189,13 @@ function updatePhysics(particles, topicGravity, topicCenters, activeFilters) {
             fy += (dy / dist) * force;
         });
         
-        // 3. Gentle pull toward screen center (prevents drifting off)
-        const centerX = viewWidth / 2;
-        const centerY = viewHeight / 2;
-        const toCenterX = centerX - p.x;
-        const toCenterY = centerY - p.y;
-        fx += toCenterX * PHYSICS.centerPull;
-        fy += toCenterY * PHYSICS.centerPull;
+        // 3. Constant rightward drift
+        fx += PHYSICS.rightwardDrift;
+        
+        // 4. Keep vertically centered (soft constraint)
+        const verticalCenter = viewHeight / 2;
+        const toCenter = verticalCenter - p.y;
+        fy += toCenter * 0.001; // Gentle vertical centering
         
         // Update velocity
         p.vx += fx * PHYSICS.timeStep;
@@ -216,8 +216,15 @@ function updatePhysics(particles, topicGravity, topicCenters, activeFilters) {
         p.x += p.vx;
         p.y += p.vy;
         
-        // Keep within bounds
-        p.x = Math.max(50, Math.min(viewWidth - p.size - 50, p.x));
+        // Wraparound horizontally - when leaving right edge, reappear on left
+        if (p.x > viewWidth + 50) {
+            p.x = -p.size - 50;
+        }
+        if (p.x < -p.size - 50) {
+            p.x = viewWidth + 50;
+        }
+        
+        // Keep within vertical bounds
         p.y = Math.max(50, Math.min(viewHeight - p.size - 50, p.y));
         
         // Update opacity based on filters
@@ -236,10 +243,20 @@ function updatePhysics(particles, topicGravity, topicCenters, activeFilters) {
 function renderParticles(particles) {
     const container = document.getElementById('floating-grid');
     
+    // Map short names to formal names
+    const formalNames = {
+        'qiana': 'Qiana Mickie',
+        'anamaria': 'Dr. Anamaría Flores',
+        'ena': 'Ms. Ena K. McPherson',
+        'kwesi': 'Kwesi Joseph, MBA'
+    };
+    
     particles.forEach(p => {
         let tile = document.getElementById(`tile-${p.video.id}`);
         
         if (!tile) {
+            const displayName = formalNames[p.video.interviewee] || p.video.interviewee;
+            
             // Create tile
             tile = document.createElement('div');
             tile.id = `tile-${p.video.id}`;
@@ -250,7 +267,7 @@ function renderParticles(particles) {
                 <div class="tile-overlay">
                     <div class="tile-title">${p.video.title}</div>
                     <div class="tile-meta">
-                        <div>${p.video.interviewee}</div>
+                        <div>${displayName}</div>
                         <div>${Math.floor(p.video.duration / 60)}:${(p.video.duration % 60).toString().padStart(2, '0')}</div>
                     </div>
                     <div class="tile-topics">${p.video.topics.slice(0, 3).join(', ')}</div>
@@ -271,10 +288,10 @@ function renderParticles(particles) {
 
 // Color palette
 const INTERVIEWEE_COLORS = {
-    'kwesi': '#d4c5a9',
-    'ena': '#b8c5b0',
-    'anamaria': '#c9b5b8',
-    'qiana': '#a8b8c5'
+    'qiana': '#a8b8c5',          // soft slate - Qiana Mickie
+    'anamaria': '#c9b5b8',       // dusty rose - Dr. Anamaría Flores
+    'ena': '#b8c5b0',            // sage green - Ms. Ena K. McPherson
+    'kwesi': '#d4c5a9'           // warm sand - Kwesi Joseph, MBA
 };
 
 // State
@@ -337,6 +354,16 @@ function openVideo(video) {
     const modal = document.getElementById('video-modal');
     const modalContent = document.getElementById('modal-video-content');
     
+    // Map short names to formal names
+    const formalNames = {
+        'qiana': 'Qiana Mickie',
+        'anamaria': 'Dr. Anamaría Flores',
+        'ena': 'Ms. Ena K. McPherson',
+        'kwesi': 'Kwesi Joseph, MBA'
+    };
+    
+    const displayName = formalNames[video.interviewee] || video.interviewee;
+    
     modalContent.innerHTML = `
         <div class="modal-header">
             <h2>${video.title}</h2>
@@ -350,7 +377,7 @@ function openVideo(video) {
             style="border: none; background: #000;">
         </iframe>
         <div class="modal-meta">
-            <div><strong>${video.interviewee}</strong></div>
+            <div><strong>${displayName}</strong></div>
             <div class="modal-topics">${video.topics.join(' • ')}</div>
         </div>
         
