@@ -7,93 +7,91 @@ const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq
 const YOUR_GIFS = [
     { 
         id: 'gif1',
-        url: 'assets/gif/callalloo.gif',
-        text: 'Visual interpretation of urban growth patterns',
-        themes: ['community', 'gardening']
+        url: 'https://drive.google.com/uc?export=view&id=1msLPOMbSM0BylRKduw86YBK_1oSjQeIE',
+        text: '',
+        themes: ['community']
     },
     { 
         id: 'gif2',
-        url: 'assets/gif/dandelion.gif',
-        text: 'Rhythms of seasonal planting cycles',
-        themes: ['technique', 'future']
+        url: 'https://drive.google.com/uc?export=view&id=10jn7PaWNoi8mwkoQP7oz5fGs4PEzw_0j',
+        text: '',
+        themes: ['gardening']
     },
     { 
         id: 'gif3',
-        url: 'assets/gif/dancingcollard.gif',
-        text: 'Rhythms of seasonal planting cycles',
-        themes: ['technique', 'future']
+        url: 'https://drive.google.com/uc?export=view&id=1P_rWimK3uq20-T1XcaWjsExNb_JoT9Rl',
+        text: '',
+        themes: ['future']
     },
     { 
         id: 'gif4',
-        url: 'assets/gif/callalloodrink.gif',
-        text: 'Rhythms of seasonal planting cycles',
-        themes: ['technique', 'future']
+        url: 'https://drive.google.com/uc?export=view&id=1_vdP21Ieypv3yVZx0A2AVeRXo_ywTvP9',
+        text: '',
+        themes: ['politics']
     },
     { 
         id: 'gif5',
-        url: 'assets/gif/garlic.gif',
-        text: 'Rhythms of seasonal planting cycles',
-        themes: ['technique', 'future']
+        url: 'https://drive.google.com/uc?export=view&id=1AVQqYYk0ip05wQFise7uOGIt4DCF06Vx',
+        text: '',
+        themes: ['health']
     },
     { 
         id: 'gif6',
-        url: 'assets/gif/ladyliberty.gif',
-        text: 'Rhythms of seasonal planting cycles',
-        themes: ['technique', 'future']
+        url: 'https://drive.google.com/uc?export=view&id=1_rCJs2O3kYUC990JEluhqK2gk2eWGmqs',
+        text: '',
+        themes: ['personal']
     },
     { 
         id: 'gif7',
-        url: 'assets/gif/pepperplant.gif',
-        text: 'Rhythms of seasonal planting cycles',
-        themes: ['technique', 'future']
+        url: 'https://drive.google.com/uc?export=view&id=1I5W_Iud5TCO-m4gIukx4VxRGGSFV_Wfa',
+        text: '',
+        themes: ['community']
     },
     { 
         id: 'gif8',
-        url: 'assets/gif/sotomayerhomes.gif',
-        text: 'Rhythms of seasonal planting cycles',
-        themes: ['technique', 'future']
+        url: 'https://drive.google.com/uc?export=view&id=1dAwet46krAL3FkFZi0YqZlqpN9-MTF03',
+        text: '',
+        themes: ['gardening']
     }
-    // Add more of your GIFs with associated themes
 ];
 
 const STUDENT_GIFS = [
     {
         id: 'sgif1',
-        url: 'assets/gif/AbdoulBaldeTheSnake.gif',
+        url: 'https://drive.google.com/uc?export=view&id=1GkIWGAmN0pBmczPU5bpQWNNHMNAbxqO1',
         text: 'Abdoul Balde - The Snake',
         themes: ['community']
     },
     {
         id: 'sgif2',
-        url: 'assets/gif/AlexanderHarrisWormAnimation.gif',
+        url: 'https://drive.google.com/uc?export=view&id=13vBsbGfCbbQoUwrxAk86tZqia5uOv2WJ',
         text: 'Alexander Harris - Worm Animation',
-        themes: ['practice']
+        themes: ['gardening']
     },
     {
         id: 'sgif3',
-        url: 'assets/gif/AloeAnimationGif.gif',
+        url: 'https://drive.google.com/uc?export=view&id=1mxxYVA66Lo9XQv8cF8ovPtCsQW1z1Exm',
         text: 'Karamoko Tounkara - Aloe Animation',
         themes: ['future']
     },
     {
         id: 'sgif4',
-        url: 'assets/gif/KwameKusiGIF.gif',
+        url: 'https://drive.google.com/uc?export=view&id=1VrBaqXacuPLAC28VRzJndSZXbqGBZixi',
         text: 'Kwame Kusi - Corn Animation',
         themes: ['politics']
     },
     {
         id: 'sgif5',
-        url: 'assets/gif/LatifGIF.gif',
+        url: 'https://drive.google.com/uc?export=view&id=156pXzdp6watMGsL9pmk8CnxHXRfuz52R',
         text: 'Latif Latif - Corn Animation',
         themes: ['health']
     },
     {
         id: 'sgif6',
-        url: 'assets/gif/LeoGIF.gif',
+        url: 'https://drive.google.com/uc?export=view&id=10qsa288r6oMuC2fZbDbLVUEGaX38jbzw',
         text: 'Leo Rodriguez - Corn Animation',
         themes: ['personal']
-    },
-    // Add student GIFs
+    }
 ];
 
 // State
