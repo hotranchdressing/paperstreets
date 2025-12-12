@@ -15,16 +15,6 @@ const VIDEOS = [
     {id:"v44",interviewee:"qiana",topics:["youth","elders","community"],duration:227,title:"How to build a succession plan",url:"https://drive.google.com/file/d/1JlNg02EYNXqeE5shG9W0jwS0fCPAUcwo/preview"}
 ];
 
-const THEME_GIF = {
-    url: 'https://drive.google.com/thumbnail?id=1msLPOMbSM0BylRKduw86YBK_1oSjQeIE&sz=w350',
-    text: ''
-};
-
-const STUDENT_GIF = {
-    url: 'https://drive.google.com/thumbnail?id=1GkIWGAmN0pBmczPU5bpQWNNHMNAbxqO1&sz=w350',
-    text: 'Abdoul Balde - The Snake'
-};
-
 const FORMAL_NAMES = {
     'qiana': 'Qiana Mickie',
     'anamaria': 'Dr. Anamaría Flores',
@@ -58,7 +48,6 @@ function renderVideos() {
     });
     
     let html = '';
-    let gifIndex = 0;
     
     Object.entries(byInterviewee).forEach(([interviewee, clips]) => {
         html += `
@@ -70,24 +59,6 @@ function renderVideos() {
                 </div>
             </div>
         `;
-        
-        // Add GIF after first speaker section
-        if (gifIndex === 0) {
-            html += `
-                <div class="theme-gif" onclick="toggleGif(this)">
-                    <img src="${THEME_GIF.url}" alt="Visual interpretation">
-                    ${THEME_GIF.text ? `<div class="gif-text hidden">${THEME_GIF.text}</div>` : ''}
-                </div>
-            `;
-        } else if (gifIndex === 1) {
-            html += `
-                <div class="theme-gif" onclick="toggleGif(this)">
-                    <img src="${STUDENT_GIF.url}" alt="Student work">
-                    <div class="gif-text hidden">${STUDENT_GIF.text}</div>
-                </div>
-            `;
-        }
-        gifIndex++;
     });
     
     container.innerHTML = html;
@@ -110,19 +81,6 @@ function renderVideoTile(video) {
             </div>
         </div>
     `;
-}
-
-function toggleGif(element) {
-    const img = element.querySelector('img');
-    const text = element.querySelector('.gif-text');
-    
-    if (text && text.classList.contains('hidden')) {
-        img.classList.add('hidden');
-        text.classList.remove('hidden');
-    } else if (text) {
-        text.classList.add('hidden');
-        img.classList.remove('hidden');
-    }
 }
 
 function openVideo(videoId) {
