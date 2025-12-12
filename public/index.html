@@ -15,8 +15,8 @@
         </header>
 
         <main class="homepage">
-            <div class="featured-gif">
-                <img src="https://drive.google.com/thumbnail?id=1msLPOMbSM0BylRKduw86YBK_1oSjQeIE&sz=w400" alt="Featured visual">
+            <div class="featured-gif" id="featured-gif">
+                <!-- Random GIF will load here -->
             </div>
             
             <div class="theme-grid">
@@ -82,5 +82,23 @@
             </div>
         </main>
     </div>
+    
+    <script>
+    // Your GIFs
+    const YOUR_GIFS = [
+        'https://drive.google.com/thumbnail?id=1msLPOMbSM0BylRKduw86YBK_1oSjQeIE&sz=w400',
+        'https://drive.google.com/thumbnail?id=10jn7PaWNoi8mwkoQP7oz5fGs4PEzw_0j&sz=w400',
+        'https://drive.google.com/thumbnail?id=1P_rWimK3uq20-T1XcaWjsExNb_JoT9Rl&sz=w400',
+        'https://drive.google.com/thumbnail?id=1_vdP21Ieypv3yVZx0A2AVeRXo_ywTvP9&sz=w400',
+        'https://drive.google.com/thumbnail?id=1AVQqYYk0ip05wQFise7uOGIt4DCF06Vx&sz=w400',
+        'https://drive.google.com/thumbnail?id=1_rCJs2O3kYUC990JEluhqK2gk2eWGmqs&sz=w400',
+        'https://drive.google.com/thumbnail?id=1I5W_Iud5TCO-m4gIukx4VxRGGSFV_Wfa&sz=w400',
+        'https://drive.google.com/thumbnail?id=1dAwet46krAL3FkFZi0YqZlqpN9-MTF03&sz=w400'
+    ];
+    
+    // Pick random GIF
+    const randomGif = YOUR_GIFS[Math.floor(Math.random() * YOUR_GIFS.length)];
+    document.getElementById('featured-gif').innerHTML = `<img src="${randomGif}" alt="Featured visual">`;
+    </script>
 </body>
 </html>
