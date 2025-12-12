@@ -527,6 +527,16 @@ function escapeHtml(text) {
 
 // Initialize
 async function init() {
+    // Show loading state with random GIF
+    const app = document.getElementById('app');
+    const loadingGif = YOUR_GIFS[Math.floor(Math.random() * YOUR_GIFS.length)];
+    app.innerHTML = `
+        <div style="text-align: center; padding: 60px;">
+            <img src="${loadingGif.url}" style="width: 200px; height: 200px; object-fit: cover; border-radius: 4px; margin-bottom: 20px;">
+            <div style="color: #888; font-size: 12px; letter-spacing: 2px;">LOADING...</div>
+        </div>
+    `;
+    
     await loadResponses();
     allVideos = await fetchVideosFromSheet();
     console.log(`Loaded ${allVideos.length} videos`);
