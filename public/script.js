@@ -132,10 +132,10 @@ function checkOverlap(x, y, size, positions) {
 
 // Color palette for interviewees
 const INTERVIEWEE_COLORS = {
-    'kwesi': '#d4c5a9',      // warm sand
-    'ena': '#b8c5b0',        // sage green
-    'anamaria': '#c9b5b8',   // dusty rose
-    'qiana': '#a8b8c5'       // soft slate
+    'Kwesi Joseph, MBA': '#d4c5a9',      // warm sand
+    'Ms. Ena K. McPherson': '#b8c5b0',        // sage green
+    'Dr. Anamaría Flores': '#c9b5b8',   // dusty rose
+    'Qiana Mickie': '#a8b8c5'       // soft slate
 };
 
 // Render floating grid
