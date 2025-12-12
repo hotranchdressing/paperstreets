@@ -59,11 +59,8 @@ body {
     max-width: 400px;
     height: 300px;
     margin: 0 auto 60px;
-    cursor: pointer;
     position: relative;
     overflow: hidden;
-    border-radius: 4px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .featured-gif img {
@@ -71,23 +68,6 @@ body {
     height: 100%;
     object-fit: cover;
     transition: opacity 0.3s ease;
-}
-
-.featured-gif .gif-text {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: #fff;
-    padding: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 15px;
-    line-height: 1.8;
-    color: #3a3a3a;
 }
 
 .hidden {
@@ -111,6 +91,7 @@ body {
     text-decoration: none;
     display: block;
     color: inherit;
+    text-align: center;
 }
 
 .theme-card:hover {
@@ -138,6 +119,28 @@ body {
     color: #999;
     text-transform: uppercase;
     letter-spacing: 1px;
+    margin-bottom: 16px;
+}
+
+/* Theme card GIF */
+.theme-card-gif {
+    width: 100%;
+    max-width: 200px;
+    height: 150px;
+    margin: 16px auto 8px;
+}
+
+.theme-card-gif img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gif-caption {
+    font-size: 10px;
+    color: #888;
+    font-style: italic;
+    margin-top: 8px;
 }
 
 /* Theme Page */
@@ -156,6 +159,8 @@ body {
 .breadcrumb-link {
     cursor: pointer;
     transition: color 0.2s ease;
+    text-decoration: none;
+    color: #888;
 }
 
 .breadcrumb-link:hover {
@@ -247,46 +252,6 @@ body {
 .tile-duration {
     font-size: 10px;
     color: rgba(255,255,255,0.8);
-}
-
-/* Theme GIFs */
-.theme-gif {
-    width: 100%;
-    max-width: 350px;
-    height: 250px;
-    margin: 0 auto 64px;
-    cursor: pointer;
-    position: relative;
-    overflow: visible;
-    opacity: 0.9;
-    transition: opacity 0.3s ease;
-}
-
-.theme-gif:hover {
-    opacity: 1;
-}
-
-.theme-gif img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.theme-gif .gif-text {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: #fff;
-    padding: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 13px;
-    line-height: 1.8;
-    color: #3a3a3a;
 }
 
 /* Video Modal */
@@ -420,89 +385,6 @@ body {
     color: #888;
 }
 
-/* Response Section */
-.response-section {
-    padding: 24px;
-}
-
-.response-section h4 {
-    font-size: 14px;
-    font-weight: normal;
-    margin-bottom: 20px;
-    color: #5a5a5a;
-    letter-spacing: 1px;
-}
-
-.response-list {
-    margin-bottom: 32px;
-}
-
-.response-item {
-    margin-bottom: 24px;
-    padding-left: 16px;
-    border-left: 3px solid #e0e0e0;
-    font-size: 14px;
-    transition: border-color 0.2s ease;
-}
-
-.response-item:hover {
-    border-left-color: #999;
-}
-
-.response-timestamp {
-    color: #999;
-    font-size: 11px;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.response-text {
-    line-height: 1.8;
-    color: #3a3a3a;
-}
-
-.response-input textarea {
-    width: 100%;
-    min-height: 100px;
-    padding: 14px;
-    border: 1px solid #d5d5d5;
-    border-radius: 3px;
-    font-family: 'Courier New', monospace;
-    font-size: 14px;
-    resize: vertical;
-    background: #fafafa;
-    transition: border-color 0.2s ease;
-}
-
-.response-input textarea:focus {
-    outline: none;
-    border-color: #888;
-    background: #fff;
-}
-
-.btn-primary {
-    margin-top: 12px;
-    padding: 10px 20px;
-    background: #4a4a4a;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-primary:hover {
-    background: #2a2a2a;
-}
-
-.btn-primary:disabled {
-    background: #999;
-    cursor: wait;
-}
-
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .container {
@@ -527,8 +409,7 @@ body {
         min-height: 100px !important;
     }
 
-    .featured-gif,
-    .theme-gif {
+    .featured-gif {
         height: 200px;
     }
 
