@@ -3,13 +3,19 @@ const SHEET_ID = '1_Szf2HEZgx8l5ro5phSEoS3qvRLOJEdtSNqyHJPcg2U';
 const SHEET_NAME = 'Sheet1';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
-// Convert Google Drive share URL to direct video URL
+// Convert Google Drive share URL to embed URL
 function convertDriveUrl(shareUrl) {
     const fileIdMatch = shareUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
     if (fileIdMatch) {
-        return `https://drive.google.com/uc?export=download&id=${fileIdMatch[1]}`;
+        return {
+            embedUrl: `https://drive.google.com/file/d/${fileIdMatch[1]}/preview`,
+            fileId: fileIdMatch[1]
+        };
     }
-    return shareUrl;
+    return {
+        embedUrl: shareUrl,
+        fileId: null
+    };
 }
 
 // Fetch and parse Google Sheets data
@@ -24,13 +30,15 @@ async function fetchVideosFromSheet() {
         
         const videos = rows.map(row => {
             const cells = row.c;
+            const driveData = convertDriveUrl(cells[5]?.v || '');
             return {
                 id: cells[0]?.v || '',
                 interviewee: cells[1]?.v || '',
                 topics: cells[2]?.v ? cells[2].v.split(',').map(t => t.trim()) : [],
                 duration: parseInt(cells[3]?.v) || 0,
                 title: cells[4]?.v || '',
-                url: convertDriveUrl(cells[5]?.v || '')
+                url: driveData.embedUrl,
+                fileId: driveData.fileId
             };
         }).filter(v => v.id); // Filter out empty rows
         
@@ -177,13 +185,13 @@ function openVideo(video) {
             <h2>${video.title}</h2>
             <button class="close-modal" onclick="closeVideoModal()">×</button>
         </div>
-        <video 
-            controls 
-            autoplay
-            style="width: 100%; max-height: 70vh; background: #000;">
-            <source src="${video.url}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+        <iframe 
+            src="${video.url}" 
+            width="100%" 
+            height="480"
+            allow="autoplay"
+            style="border: none; background: #000;">
+        </iframe>
         <div class="modal-meta">
             <div><strong>${video.interviewee}</strong></div>
             <div class="modal-topics">${video.topics.join(' • ')}</div>
@@ -218,11 +226,10 @@ function closeVideoModal() {
     const modal = document.getElementById('video-modal');
     modal.classList.remove('visible');
     
-    // Stop video
-    const video = modal.querySelector('video');
-    if (video) {
-        video.pause();
-        video.currentTime = 0;
+    // Clear iframe to stop video
+    const iframe = modal.querySelector('iframe');
+    if (iframe) {
+        iframe.src = iframe.src; // Reload iframe to stop playback
     }
 }
 
