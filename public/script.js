@@ -160,12 +160,16 @@ function convertDriveUrl(shareUrl) {
 
 // Fetch videos from Google Sheets
 async function fetchVideosFromSheet() {
+    console.log('Fetching videos from Google Sheets...');
     try {
         const response = await fetch(SHEET_URL);
+        console.log('Fetch response:', response.status);
         const text = await response.text();
+        console.log('Response text length:', text.length);
         
         const json = JSON.parse(text.substring(47).slice(0, -2));
         const rows = json.table.rows;
+        console.log('Number of rows:', rows.length);
         
         const videos = rows.map(row => {
             const cells = row.c;
@@ -179,6 +183,7 @@ async function fetchVideosFromSheet() {
             };
         }).filter(v => v.id);
         
+        console.log('Parsed videos:', videos.length);
         return videos;
     } catch (error) {
         console.error('Error fetching sheet data:', error);
