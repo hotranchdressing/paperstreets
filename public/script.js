@@ -536,7 +536,13 @@ async function init() {
     renderHomepage();
 }
 
-document.addEventListener('DOMContentLoaded', init);
+// Try both DOMContentLoaded and immediate execution
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    // DOM already loaded, run immediately
+    init();
+}
 
 // Modal close handlers
 document.addEventListener('click', (e) => {
